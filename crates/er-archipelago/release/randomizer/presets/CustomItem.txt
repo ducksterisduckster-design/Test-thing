@@ -1,0 +1,173 @@
+KeyItemSilo: DLC
+NorandomItems:
+- Name: Spectral Steed Whistle
+  ID: goods:130
+- Name: Flask of Wondrous Physick
+  ID: goods:250
+- Name: Crafting Kit
+  ID: goods:8500
+- Name: Spirit Calling Bell
+  ID: goods:8158
+- Name: Whetstone Knife
+  ID: goods:8590
+- Name: Lantern
+  ID: goods:2070
+- Name: Gaol Lower Level Key
+  ID: goods:2008006
+- Name: Gaol Upper Level Key
+  ID: goods:2008005
+NorandomLocations: []
+RemoveItems:
+- Name: Furlcalling Finger Remedy
+  ID: goods:150
+Placements:
+- Type: KeyItems
+  Mode: Important
+  Items:
+  - Group: keyitems
+  Requires:
+  - Tag: racemode
+  - Tag: boss
+  Excludes:
+  - Tag: missable
+- Type: QuestItems
+  Mode: Anywhere
+  Items:
+  - Group: questitems
+  - Name: Shabriri Grape
+    ID: goods:1240
+  - Name: Seedbed Curse
+    ID: goods:8193
+  - Name: Deathroot
+    ID: goods:2090
+  Excludes:
+  - Tag: missable
+- Type: CoreMechanics
+  Mode: Important
+  Items:
+  - Name: Spectral Steed Whistle
+    ID: goods:130
+  - Name: Flask of Wondrous Physick
+    ID: goods:250
+  - Name: Talisman Pouch
+    ID: goods:10040
+  - Name: Memory Stone
+    ID: goods:10030
+  - Name: Crafting Kit
+    ID: goods:8500
+  - Name: Spirit Calling Bell
+    ID: goods:8158
+  - Name: Lantern
+    ID: goods:2070
+  - Name: Whetstone Knife
+    ID: goods:8590
+  - Group: whetblades
+  Excludes:
+  - Tag: missable
+- Type: SacredFlaskUpgrades
+  Mode: Important
+  Items:
+  - Name: Golden Seed
+    ID: goods:10010
+  - Name: Sacred Tear
+    ID: goods:10020
+  Excludes:
+  - Tag: missable
+- Type: UpgradeBellBearings
+  Mode: Important
+  Items:
+  - Group: upgradeashes
+  Excludes:
+  - Tag: missable
+- Type: ShadowRealmBlessings
+  Mode: Important
+  Items:
+  - Name: Scadutree Fragment
+    ID: goods:2010000
+  - Name: Revered Spirit Ash
+    ID: goods:2010100
+  Excludes:
+  - Tag: missable
+- Type: SecondaryMechanics
+  Mode: Custom
+  Items:
+  - Group: cookbooks
+  - Group: containers
+  - Group: crystaltears
+  - Group: itemashes
+  Excludes:
+  - Tag: missable
+- Type: BossTools
+  Mode: Custom
+  Items:
+  - Name: Margit's Shackle
+    ID: goods:2140
+  - Name: Mohg's Shackle
+    ID: goods:2150
+  - Name: Miquella's Great Rune
+    ID: goods:2008000
+  - Name: Sentry's Torch
+    ID: weapon:24070000
+  - Name: Purifying Crystal Tear
+    ID: goods:11027
+  - Name: Blasphemous Claw
+    ID: goods:2080
+  Excludes:
+  - Tag: missable
+  - Tag: boss
+  - Tag: altboss
+- Type: BaseOnlyItems
+  Mode: Custom
+  Items: []
+  Excludes:
+  - Tag: dlc
+- Type: DlcOnlyItems
+  Mode: Custom
+  Items:
+  - Name: Scadutree Fragment
+    ID: goods:2010000
+  - Name: Revered Spirit Ash
+    ID: goods:2010100
+  Excludes:
+  - Tag: nodlc
+PremiumGroups:
+- Type: PremiumShop
+  Locations:
+  - Tag: bosssoulshop
+  - Tag: dragonshop
+  Items:
+  - Group: accessories
+  - Group: weapons
+  - Group: gems
+  - Group: crystaltears
+  - Group: sorceries
+  - Group: incantations
+  - Name: Ancient Dragon Smithing Stone
+    ID: goods:10140
+  - Name: Somber Ancient Dragon Smithing Stone
+    ID: goods:10168
+- Type: SorceryShop
+  Locations:
+  - Tag: sorceryshop
+  Items:
+  - Group: sorceries
+- Type: MiracleShop
+  Locations:
+  - Tag: incantationshop
+  Items:
+  - Group: incantations
+CustomSilos: []
+LocationGroups:
+- Requires:
+  - Tag: racemode
+  - Tag: boss
+  - Tag: seedtree
+  - Tag: church
+  - Tag: raceshop
+  - Tag: cross
+  - Tag: fragment
+  - Tag: revered
+  Excludes:
+  - Tag: missable
+ItemShards: []
+Version: 1

@@ -1,0 +1,174 @@
+23:45:53 [INFO] Logger initialized.
+23:45:53 [ERROR] Rust panic: This game version or distribution is not supported
+   0: DllMain
+   1: DllMain
+   2: DllMain
+   3: DllMain
+   4: DllMain
+   5: DllMain
+   6: DllMain
+   7: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   8: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   9: DllMain
+  10: DllMain
+  11: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  12: DllMain
+  13: DllMain
+  14: DllMain
+  15: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  16: RtlEncodeRemotePointer
+  17: RtlAllocateHeap
+  18: LdrAddRefDll
+  19: LdrGetProcedureAddressForCaller
+  20: LdrGetProcedureAddress
+  21: LdrGetDllHandleEx
+  22: LdrGetDllHandleEx
+  23: LdrLoadDll
+  24: OverlayHookD3D3
+  25: LoadLibraryExW
+  26: OverlayHookD3D3
+  27: OverlayHookD3D3
+  28: DllMain
+  29: DllMain
+  30: DllMain
+  31: DllMain
+  32: Scaleform::Render::Matrix2x4<float>::TransformByInverse
+  33: Scaleform::Render::Matrix4x4<float>::SetIdentity
+  34: AK::WriteBytesCount::WriteBytes
+  35: BaseThreadInitThunk
+  36: RtlUserThreadStart
+
+23:45:56 [ERROR] Rust panic: panic in a function that cannot unwind
+   0: DllMain
+   1: DllMain
+   2: DllMain
+   3: DllMain
+   4: DllMain
+   5: DllMain
+   6: DllMain
+   7: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   8: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   9: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  10: DllMain
+  11: _CxxFrameHandler3
+  12: is_exception_typeof
+  13: RtlCaptureContext2
+  14: DllMain
+  15: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  16: RtlEncodeRemotePointer
+  17: RtlAllocateHeap
+  18: LdrAddRefDll
+  19: LdrGetProcedureAddressForCaller
+  20: LdrGetProcedureAddress
+  21: LdrGetDllHandleEx
+  22: LdrGetDllHandleEx
+  23: LdrLoadDll
+  24: OverlayHookD3D3
+  25: LoadLibraryExW
+  26: OverlayHookD3D3
+  27: OverlayHookD3D3
+  28: DllMain
+  29: DllMain
+  30: DllMain
+  31: DllMain
+  32: Scaleform::Render::Matrix2x4<float>::TransformByInverse
+  33: Scaleform::Render::Matrix4x4<float>::SetIdentity
+  34: AK::WriteBytesCount::WriteBytes
+  35: BaseThreadInitThunk
+  36: RtlUserThreadStart
+
+00:08:29 [INFO] Logger initialized.
+00:08:29 [ERROR] Rust panic: This game version or distribution is not supported
+   0: DllMain
+   1: DllMain
+   2: DllMain
+   3: DllMain
+   4: DllMain
+   5: DllMain
+   6: DllMain
+   7: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   8: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   9: DllMain
+  10: DllMain
+  11: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  12: DllMain
+  13: DllMain
+  14: DllMain
+  15: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  16: RtlEncodeRemotePointer
+  17: RtlAllocateHeap
+  18: LdrAddRefDll
+  19: LdrGetProcedureAddressForCaller
+  20: LdrGetProcedureAddress
+  21: LdrGetDllHandleEx
+  22: LdrGetDllHandleEx
+  23: LdrLoadDll
+  24: OverlayHookD3D3
+  25: LoadLibraryExW
+  26: OverlayHookD3D3
+  27: OverlayHookD3D3
+  28: DllMain
+  29: DllMain
+  30: DllMain
+  31: DllMain
+  32: Scaleform::Render::Matrix2x4<float>::TransformByInverse
+  33: Scaleform::Render::Matrix4x4<float>::SetIdentity
+  34: AK::WriteBytesCount::WriteBytes
+  35: BaseThreadInitThunk
+  36: RtlUserThreadStart
+
+00:22:26 [ERROR] Rust panic: panic in a function that cannot unwind
+   0: DllMain
+   1: DllMain
+   2: DllMain
+   3: DllMain
+   4: DllMain
+   5: DllMain
+   6: DllMain
+   7: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   8: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   9: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  10: DllMain
+  11: _CxxFrameHandler3
+  12: is_exception_typeof
+  13: RtlCaptureContext2
+  14: DllMain
+  15: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  16: RtlEncodeRemotePointer
+  17: RtlAllocateHeap
+  18: LdrAddRefDll
+  19: LdrGetProcedureAddressForCaller
+  20: LdrGetProcedureAddress
+  21: LdrGetDllHandleEx
+  22: LdrGetDllHandleEx
+  23: LdrLoadDll
+  24: OverlayHookD3D3
+  25: LoadLibraryExW
+  26: OverlayHookD3D3
+  27: OverlayHookD3D3
+  28: DllMain
+  29: DllMain
+  30: DllMain
+  31: DllMain
+  32: Scaleform::Render::Matrix2x4<float>::TransformByInverse
+  33: Scaleform::Render::Matrix4x4<float>::SetIdentity
+  34: AK::WriteBytesCount::WriteBytes
+  35: BaseThreadInitThunk
+  36: RtlUserThreadStart
+
+00:41:31 [INFO] Logger initialized.
+00:41:31 [INFO] Worker thread initialized.
+00:41:31 [INFO] Game system initialized.
+00:42:10 [INFO] Logger initialized.
+00:42:10 [INFO] Worker thread initialized.
+00:42:10 [INFO] Game system initialized.
+00:42:13 [INFO] [APC] Disconnected: Archipelago refused connection: the name provided doesn't match any names on the server
+13:56:58 [INFO] Logger initialized.
+13:56:58 [INFO] Worker thread initialized.
+13:56:58 [INFO] Game system initialized.
+13:57:06 [INFO] [APC] Connection refused. Make sure the server session is running and the URL is up-to-date.
+14:05:17 [INFO] Logger initialized.
+14:05:17 [INFO] Worker thread initialized.
+14:05:17 [INFO] Game system initialized.
+14:05:19 [ERROR] Missing or unreadable cache for EldenRing: Het systeem kan het opgegeven bestand niet vinden. (os error 2)
+14:05:21 [INFO] [APC] Disconnected: Archipelago refused connection: IncompatibleVersion

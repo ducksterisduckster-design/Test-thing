@@ -1,0 +1,57 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/er-archipelago",
+    "crates/shared",
+]
+
+[workspace.package]
+edition = "2024"
+license = "MIT"
+repository = "https://github.com/fswap/fromsoftware-archipelago"
+
+[workspace.dependencies]
+anyhow = "1.0.102"
+archipelago_rs = { git = "https://github.com/FantaTanked/archipelago_rs", branch = "er-client-version-0.6.6"}
+bincode = "2.0.0"
+fromsoftware-shared = { git = "https://github.com/ducksterisduckster-design/fromsoft-rs" }
+hudhook = "0.9.0"
+ilhook = {version = "2.3.0", features = ["x64"]}
+json = { package = "serde_json", version = "1.0.149" }
+log = "0.4.29"
+regex = "1.12.3"
+regex-macro = "0.3.0"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_repr = "0.1.20"
+shared = { path = "crates/shared"}
+
+[workspace.dependencies.windows]
+version = "0.62"
+features = [
+    "Win32_Foundation",
+    "Win32_System_ProcessStatus",
+    "Win32_System_SystemServices",
+    "Win32_UI_WindowsAndMessaging",
+]
+
+[patch.crates-io]
+imgui = { git = "https://github.com/imgui-rs/imgui-rs" }
+imgui-sys = { git = "https://github.com/imgui-rs/imgui-rs" }
+fromsoftware-shared = { git = "https://github.com/vswarte/fromsoftware-rs" }
+darksouls3 = { git = "https://github.com/vswarte/fromsoftware-rs" }
+sekiro = { git = "https://github.com/vswarte/fromsoftware-rs" }
+
+# Uncomment these to use local copies of dependencies for testing
+
+# archipelago_rs = { path = "../archipelago_rs" }
+
+# [patch."https://github.com/vswarte/fromsoftware-rs"]
+# fromsoftware-shared = { path = "../fromsoftware-rs/crates/shared" }
+# darksouls3 = { path = "../fromsoftware-rs/crates/darksouls3" }
+# sekiro = { path = "../fromsoftware-rs/crates/sekiro" }
+
+# [patch."https://github.com/nex3/fromsoftware-extra"]
+# fromsoftware-extra-shared = { path = "../fromsoftware-extra/crates/shared" }
+# darksouls3-extra = { path = "../fromsoftware-extra/crates/darksouls3" }
+# sekiro-extra = { path = "../fromsoftware-extra/crates/sekiro" }
+
