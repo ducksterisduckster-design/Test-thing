@@ -1,0 +1,791 @@
+22:19:40 [INFO] Logger initialized.
+22:19:40 [ERROR] Rust panic: This game version or distribution is not supported
+   0: DllMain
+   1: DllMain
+   2: DllMain
+   3: DllMain
+   4: DllMain
+   5: DllMain
+   6: DllMain
+   7: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   8: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   9: DllMain
+  10: DllMain
+  11: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  12: DllMain
+  13: <unknown>
+  14: DllMain
+  15: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  16: RtlIsCriticalSectionLocked
+  17: RtlRaiseException
+  18: RtlDeleteElementGenericTableAvlEx
+  19: LdrGetProcedureAddressForCaller
+  20: LdrUnloadDll
+  21: LdrGetDllHandleEx
+  22: LdrGetDllHandleEx
+  23: LdrLoadDll
+  24: OverlayHookD3D3
+  25: LoadLibraryExW
+  26: OverlayHookD3D3
+  27: OverlayHookD3D3
+  28: DllMain
+  29: DllMain
+  30: DllMain
+  31: DllMain
+  32: Scaleform::Render::Matrix2x4<float>::TransformByInverse
+  33: Scaleform::Render::Matrix4x4<float>::SetIdentity
+  34: AK::WriteBytesCount::WriteBytes
+  35: BaseThreadInitThunk
+  36: RtlUserThreadStart
+
+22:19:45 [ERROR] Rust panic: panic in a function that cannot unwind
+   0: DllMain
+   1: DllMain
+   2: DllMain
+   3: DllMain
+   4: DllMain
+   5: DllMain
+   6: DllMain
+   7: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   8: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   9: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  10: DllMain
+  11: _CxxFrameHandler3
+  12: is_exception_typeof
+  13: RtlCaptureContext2
+  14: DllMain
+  15: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  16: RtlIsCriticalSectionLocked
+  17: RtlRaiseException
+  18: RtlDeleteElementGenericTableAvlEx
+  19: LdrGetProcedureAddressForCaller
+  20: LdrUnloadDll
+  21: LdrGetDllHandleEx
+  22: LdrGetDllHandleEx
+  23: LdrLoadDll
+  24: OverlayHookD3D3
+  25: LoadLibraryExW
+  26: OverlayHookD3D3
+  27: OverlayHookD3D3
+  28: DllMain
+  29: DllMain
+  30: DllMain
+  31: DllMain
+  32: Scaleform::Render::Matrix2x4<float>::TransformByInverse
+  33: Scaleform::Render::Matrix4x4<float>::SetIdentity
+  34: AK::WriteBytesCount::WriteBytes
+  35: BaseThreadInitThunk
+  36: RtlUserThreadStart
+
+23:19:42 [INFO] Logger initialized.
+23:19:42 [ERROR] Rust panic: This game version or distribution is not supported
+   0: DllMain
+   1: DllMain
+   2: DllMain
+   3: DllMain
+   4: DllMain
+   5: DllMain
+   6: DllMain
+   7: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   8: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   9: DllMain
+  10: DllMain
+  11: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  12: DllMain
+  13: <unknown>
+  14: DllMain
+  15: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  16: RtlIsCriticalSectionLocked
+  17: RtlRaiseException
+  18: RtlDeleteElementGenericTableAvlEx
+  19: LdrGetProcedureAddressForCaller
+  20: LdrUnloadDll
+  21: LdrGetDllHandleEx
+  22: LdrGetDllHandleEx
+  23: LdrLoadDll
+  24: OverlayHookD3D3
+  25: LoadLibraryExW
+  26: OverlayHookD3D3
+  27: OverlayHookD3D3
+  28: DllMain
+  29: DllMain
+  30: DllMain
+  31: DllMain
+  32: Scaleform::Render::Matrix2x4<float>::TransformByInverse
+  33: Scaleform::Render::Matrix4x4<float>::SetIdentity
+  34: AK::WriteBytesCount::WriteBytes
+  35: BaseThreadInitThunk
+  36: RtlUserThreadStart
+
+23:19:46 [ERROR] Rust panic: panic in a function that cannot unwind
+   0: DllMain
+   1: DllMain
+   2: DllMain
+   3: DllMain
+   4: DllMain
+   5: DllMain
+   6: DllMain
+   7: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   8: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   9: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  10: DllMain
+  11: _CxxFrameHandler3
+  12: is_exception_typeof
+  13: RtlCaptureContext2
+  14: DllMain
+  15: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  16: RtlIsCriticalSectionLocked
+  17: RtlRaiseException
+  18: RtlDeleteElementGenericTableAvlEx
+  19: LdrGetProcedureAddressForCaller
+  20: LdrUnloadDll
+  21: LdrGetDllHandleEx
+  22: LdrGetDllHandleEx
+  23: LdrLoadDll
+  24: OverlayHookD3D3
+  25: LoadLibraryExW
+  26: OverlayHookD3D3
+  27: OverlayHookD3D3
+  28: DllMain
+  29: DllMain
+  30: DllMain
+  31: DllMain
+  32: Scaleform::Render::Matrix2x4<float>::TransformByInverse
+  33: Scaleform::Render::Matrix4x4<float>::SetIdentity
+  34: AK::WriteBytesCount::WriteBytes
+  35: BaseThreadInitThunk
+  36: RtlUserThreadStart
+
+23:22:27 [INFO] Logger initialized.
+23:22:27 [ERROR] Rust panic: This game version or distribution is not supported
+   0: DllMain
+   1: DllMain
+   2: DllMain
+   3: DllMain
+   4: DllMain
+   5: DllMain
+   6: DllMain
+   7: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   8: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   9: DllMain
+  10: DllMain
+  11: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  12: DllMain
+  13: <unknown>
+  14: DllMain
+  15: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  16: RtlIsCriticalSectionLocked
+  17: RtlRaiseException
+  18: RtlDeleteElementGenericTableAvlEx
+  19: LdrGetProcedureAddressForCaller
+  20: LdrUnloadDll
+  21: LdrGetDllHandleEx
+  22: LdrGetDllHandleEx
+  23: LdrLoadDll
+  24: OverlayHookD3D3
+  25: LoadLibraryExW
+  26: OverlayHookD3D3
+  27: OverlayHookD3D3
+  28: DllMain
+  29: DllMain
+  30: DllMain
+  31: DllMain
+  32: Scaleform::Render::Matrix2x4<float>::TransformByInverse
+  33: Scaleform::Render::Matrix4x4<float>::SetIdentity
+  34: AK::WriteBytesCount::WriteBytes
+  35: BaseThreadInitThunk
+  36: RtlUserThreadStart
+
+23:23:04 [ERROR] Rust panic: panic in a function that cannot unwind
+   0: DllMain
+   1: DllMain
+   2: DllMain
+   3: DllMain
+   4: DllMain
+   5: DllMain
+   6: DllMain
+   7: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   8: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   9: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  10: DllMain
+  11: _CxxFrameHandler3
+  12: is_exception_typeof
+  13: RtlCaptureContext2
+  14: DllMain
+  15: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  16: RtlIsCriticalSectionLocked
+  17: RtlRaiseException
+  18: RtlDeleteElementGenericTableAvlEx
+  19: LdrGetProcedureAddressForCaller
+  20: LdrUnloadDll
+  21: LdrGetDllHandleEx
+  22: LdrGetDllHandleEx
+  23: LdrLoadDll
+  24: OverlayHookD3D3
+  25: LoadLibraryExW
+  26: OverlayHookD3D3
+  27: OverlayHookD3D3
+  28: DllMain
+  29: DllMain
+  30: DllMain
+  31: DllMain
+  32: Scaleform::Render::Matrix2x4<float>::TransformByInverse
+  33: Scaleform::Render::Matrix4x4<float>::SetIdentity
+  34: AK::WriteBytesCount::WriteBytes
+  35: BaseThreadInitThunk
+  36: RtlUserThreadStart
+
+19:10:36 [INFO] Logger initialized.
+19:10:36 [ERROR] Rust panic: Unsupported game version 2.7.1.0
+   0: DllMain
+   1: DllMain
+   2: DllMain
+   3: DllMain
+   4: DllMain
+   5: DllMain
+   6: DllMain
+   7: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   8: DllMain
+   9: DllMain
+  10: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  11: DllMain
+  12: DllMain
+  13: DllMain
+  14: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  15: DllMain
+  16: DllMain
+  17: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  18: RtlIsCriticalSectionLocked
+  19: RtlRaiseException
+  20: RtlDeleteElementGenericTableAvlEx
+  21: LdrGetProcedureAddressForCaller
+  22: LdrUnloadDll
+  23: LdrGetDllHandleEx
+  24: LdrGetDllHandleEx
+  25: LdrLoadDll
+  26: OverlayHookD3D3
+  27: LoadLibraryExW
+  28: OverlayHookD3D3
+  29: OverlayHookD3D3
+  30: DllMain
+  31: DllMain
+  32: DllMain
+  33: DllMain
+  34: Scaleform::Render::Matrix2x4<float>::TransformByInverse
+  35: Scaleform::Render::Matrix4x4<float>::SetIdentity
+  36: AK::WriteBytesCount::WriteBytes
+  37: BaseThreadInitThunk
+  38: RtlUserThreadStart
+
+19:10:42 [ERROR] Rust panic: panic in a function that cannot unwind
+   0: DllMain
+   1: DllMain
+   2: DllMain
+   3: DllMain
+   4: DllMain
+   5: DllMain
+   6: DllMain
+   7: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   8: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+   9: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  10: DllMain
+  11: _CxxFrameHandler3
+  12: is_exception_typeof
+  13: RtlCaptureContext2
+  14: DllMain
+  15: aws_lc_0_45_0_jent_entropy_switch_notime_impl
+  16: RtlIsCriticalSectionLocked
+  17: RtlRaiseException
+  18: RtlDeleteElementGenericTableAvlEx
+  19: LdrGetProcedureAddressForCaller
+  20: LdrUnloadDll
+  21: LdrGetDllHandleEx
+  22: LdrGetDllHandleEx
+  23: LdrLoadDll
+  24: OverlayHookD3D3
+  25: LoadLibraryExW
+  26: OverlayHookD3D3
+  27: OverlayHookD3D3
+  28: DllMain
+  29: DllMain
+  30: DllMain
+  31: DllMain
+  32: Scaleform::Render::Matrix2x4<float>::TransformByInverse
+  33: Scaleform::Render::Matrix4x4<float>::SetIdentity
+  34: AK::WriteBytesCount::WriteBytes
+  35: BaseThreadInitThunk
+  36: RtlUserThreadStart
+
+19:27:08 [INFO] Logger initialized.
+19:27:08 [INFO] Worker thread initialized.
+19:27:08 [INFO] Game system initialized.
+19:27:17 [INFO] [APC] Connection refused. Make sure the server session is running and the URL is up-to-date.
+19:27:39 [INFO] [APC] Reconnecting...
+19:27:40 [INFO] Archipelago connection initialized successfully
+19:27:40 [INFO] [APS] DuckRing (Team #1) playing EldenRing has joined. Client(0.6.7), ['DeathLink'].
+19:27:40 [INFO] [APS] Now that you are connected, you can use !help to list commands to run via the server. If your client supports it, you may have additional local commands you can list with /help.
+19:27:40 [INFO] [APS] Warning: your client does not support compressed websocket connections! It may stop working in the future. If you are a player, please report this to the client's developer.
+19:39:47 [INFO] Logger initialized.
+19:39:47 [INFO] Worker thread initialized.
+19:39:47 [INFO] Game system initialized.
+19:39:54 [INFO] Archipelago connection initialized successfully
+19:39:54 [INFO] [APS] DuckRing (Team #1) playing EldenRing has joined. Client(0.6.7), ['DeathLink'].
+19:39:54 [INFO] [APS] Now that you are connected, you can use !help to list commands to run via the server. If your client supports it, you may have additional local commands you can list with /help.
+19:39:54 [INFO] [APS] Warning: your client does not support compressed websocket connections! It may stop working in the future. If you are a player, please report this to the client's developer.
+19:40:58 [INFO] Granting Map: Limgrave, West (AP ID 70700, ER ID ItemId(8600, Goods) from Server)
+19:40:58 [INFO] Received 1x ItemId(8600, Goods)
+19:40:58 [INFO] Granting Map: Limgrave, East (AP ID 70702, ER ID ItemId(8602, Goods) from Server)
+19:40:58 [INFO] Received 1x ItemId(8602, Goods)
+19:40:58 [INFO] Granting Map: Weeping Peninsula (AP ID 70701, ER ID ItemId(8601, Goods) from Server)
+19:40:58 [INFO] Received 1x ItemId(8601, Goods)
+19:40:58 [INFO] Granting Map: Siofra River (AP ID 70715, ER ID ItemId(8615, Goods) from Server)
+19:40:58 [INFO] Received 1x ItemId(8615, Goods)
+19:40:58 [INFO] Granting Map: Liurnia, West (AP ID 70705, ER ID ItemId(8605, Goods) from Server)
+19:40:58 [INFO] Received 1x ItemId(8605, Goods)
+19:40:58 [INFO] Granting Map: Liurnia, North (AP ID 70704, ER ID ItemId(8604, Goods) from Server)
+19:40:58 [INFO] Received 1x ItemId(8604, Goods)
+19:40:58 [INFO] Granting Map: Liurnia, East (AP ID 70703, ER ID ItemId(8603, Goods) from Server)
+19:40:58 [INFO] Received 1x ItemId(8603, Goods)
+19:40:58 [INFO] Granting Map: Ainsel River (AP ID 70713, ER ID ItemId(8613, Goods) from Server)
+19:40:58 [INFO] Received 1x ItemId(8613, Goods)
+19:40:58 [INFO] Granting Map: Caelid (AP ID 70709, ER ID ItemId(8609, Goods) from Server)
+19:40:58 [INFO] Received 1x ItemId(8609, Goods)
+19:40:59 [INFO] Granting Map: Dragonbarrow (AP ID 70710, ER ID ItemId(8610, Goods) from Server)
+19:40:59 [INFO] Received 1x ItemId(8610, Goods)
+19:40:59 [INFO] Granting Map: Deeproot Depths (AP ID 70717, ER ID ItemId(8617, Goods) from Server)
+19:40:59 [INFO] Received 1x ItemId(8617, Goods)
+19:40:59 [INFO] Granting Map: Lake of Rot (AP ID 70714, ER ID ItemId(8614, Goods) from Server)
+19:40:59 [INFO] Received 1x ItemId(8614, Goods)
+19:40:59 [INFO] Granting Map: Altus Plateau (AP ID 70706, ER ID ItemId(8606, Goods) from Server)
+19:40:59 [INFO] Received 1x ItemId(8606, Goods)
+19:40:59 [INFO] Granting Map: Mt. Gelmir (AP ID 70708, ER ID ItemId(8608, Goods) from Server)
+19:40:59 [INFO] Received 1x ItemId(8608, Goods)
+19:40:59 [INFO] Granting Map: Leyndell, Royal Capital (AP ID 70707, ER ID ItemId(8607, Goods) from Server)
+19:40:59 [INFO] Received 1x ItemId(8607, Goods)
+19:40:59 [INFO] Granting Map: Mountaintops of the Giants, West (AP ID 70711, ER ID ItemId(8611, Goods) from Server)
+19:40:59 [INFO] Received 1x ItemId(8611, Goods)
+19:40:59 [INFO] Granting Map: Mountaintops of the Giants, East (AP ID 70712, ER ID ItemId(8612, Goods) from Server)
+19:40:59 [INFO] Received 1x ItemId(8612, Goods)
+19:40:59 [INFO] Granting Map: Consecrated Snowfield (AP ID 70718, ER ID ItemId(8618, Goods) from Server)
+19:40:59 [INFO] Received 1x ItemId(8618, Goods)
+19:40:59 [INFO] Granting Map: Mohgwyn Palace (AP ID 70716, ER ID ItemId(8616, Goods) from Server)
+19:40:59 [INFO] Received 1x ItemId(8616, Goods)
+19:41:13 [INFO] Received 1x ItemId(106, Goods)
+19:42:14 [INFO] Received 3x ItemId(1001, Goods)
+19:42:14 [INFO] Received 1x ItemId(1051, Goods)
+19:42:34 [INFO] Received 1x ItemId(103, Goods)
+19:42:34 [INFO] Received 1x ItemId(100, Goods)
+19:43:10 [INFO] Received 1x ItemId(20720, Goods)
+19:43:11 [INFO] Received 1x ItemId(20720, Goods)
+19:43:33 [INFO] Received 1x ItemId(10100, Goods)
+19:43:47 [INFO] [APS] DuckRaft (Team #1) has released all remaining items from their world.
+19:43:47 [INFO] [APS] DuckRaft found their Leather helmet (Leather body armor)
+19:43:47 [INFO] [APS] DuckRaft found their Leather body armor (Large Storage blueprint)
+19:43:47 [INFO] [APS] DuckRaft found their Balboa Island Frequency (Temperance Bruno diary 3)
+19:43:47 [INFO] [APS] DuckRaft found their progressive-zipline (Vasagatan Magazine Clipping)
+19:43:47 [INFO] [APS] DuckRaft found their progressive-axe (Clay bowl)
+19:43:47 [INFO] [APS] DuckRaft found their Resource Pack: 1 MetalOre (Binoculars)
+19:43:47 [INFO] [APS] DuckRaft found their Resource Pack: 6 MetalOre (Elaine (Tangaroa))
+19:43:47 [INFO] [APS] DuckRaft sent Golden Order Greatsword to DuckRing (Vasagatan Frequency to Balboa)
+19:43:47 [INFO] [APS] DuckRaft sent Royal Greatsword to DuckRing (Temperance Bruno diary 1)
+19:43:47 [INFO] [APS] DuckRaft sent Golden Halberd to DuckRing (Balboa Island Doll murderer 5)
+19:43:47 [INFO] [APS] DuckRaft sent Frenzied Flame Seal to DuckRing (Balboa Island Correa twins picture)
+19:43:47 [INFO] [APS] DuckRaft sent Hand Ballista to DuckRing (Medium trophy board)
+19:43:47 [INFO] [APS] DuckRaft sent Leather Trousers to DuckRing (Medium crop plot)
+19:43:47 [INFO] [APS] DuckRaft sent Sanguine Noble Robe to DuckRing (Tangaroa Ruben 5)
+19:43:47 [INFO] [APS] DuckRaft sent Godskin Noble Robe to DuckRing (Cookingpot)
+19:43:47 [INFO] [APS] DuckRaft sent Lusat's Robe to DuckRing (Juicer)
+19:43:47 [INFO] [APS] DuckRaft sent Astrologer Hood to DuckRing (Bolt)
+19:43:47 [INFO] [APS] DuckRaft sent Champion Gaiters to DuckRing (Caravan Island Detto journal 6)
+19:43:47 [INFO] [APS] DuckRaft sent Maliketh's Gauntlets to DuckRing (Caravan Island Frequency to Tangaroa)
+19:43:47 [INFO] [APS] DuckRaft sent Olivinus Glintstone Crown to DuckRing (Metal Spear)
+19:43:47 [INFO] [APS] DuckRaft sent Raging Wolf Gauntlets to DuckRing (Shogo (Temperance))
+19:43:47 [INFO] [APS] DuckRaft sent Carian Knight Armor to DuckRing (Fuel tank blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Chain Coif to DuckRing (Hannes Letter 3)
+19:43:47 [INFO] [APS] DuckRaft sent Ash of War: Ice Spear to DuckRing (Scarecrow)
+19:43:47 [INFO] [APS] DuckRaft sent Viridian Amber Medallion to DuckRing (Tangaroa Frequency to Varuna Point)
+19:43:47 [INFO] [APS] DuckRaft sent Red-Feathered Branchsword to DuckRing (Electric purifier blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Winged Sword Insignia to DuckRing (Water tank blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Crepus's Vial to DuckRing (Backpack)
+19:43:47 [INFO] [APS] DuckRaft sent Festering Bloody Finger x5 to DuckRing (Temperance Frequency to Utopia)
+19:43:47 [INFO] [APS] DuckRaft sent Rune Arc to DuckRing (Healing salve)
+19:43:47 [INFO] [APS] DuckRaft sent Rune Arc to DuckRing (Caravan Island Detto journal 5)
+19:43:47 [INFO] [APS] DuckRaft sent Rune Arc to DuckRing (Zipline quest)
+19:43:47 [INFO] [APS] DuckRaft sent Stanching Boluses to DuckRing (Temperance Bruno diary 5)
+19:43:47 [INFO] [APS] DuckRaft sent Thawfrost Boluses x2 to DuckRing (Advanced grill)
+19:43:47 [INFO] [APS] DuckRaft sent Fireproof Dried Liver x3 to DuckRing (Battery Charger quest)
+19:43:47 [INFO] [APS] DuckRaft sent Holyproof Dried Liver to DuckRing (Sprinkler)
+19:43:47 [INFO] [APS] DuckRaft sent Silver-Pickled Fowl Foot x3 to DuckRing (Tangaroa Ruben 4)
+19:43:47 [INFO] [APS] DuckRaft sent Raw Meat Dumpling to DuckRing (Metal detector blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Raw Meat Dumpling to DuckRing (Advanced Stationary Anchor blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Starlight Shards to DuckRing (Hinge)
+19:43:47 [INFO] [APS] DuckRaft sent Freezing Grease x6 to DuckRing (Utopia Captives note)
+19:43:47 [INFO] [APS] DuckRaft sent Dragonwound Grease to DuckRing (Metal arrow)
+19:43:47 [INFO] [APS] DuckRaft sent Rot Grease to DuckRing (Engine controls blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Drawstring Holy Grease x2 to DuckRing (Balboa Island Doll murderer 3)
+19:43:47 [INFO] [APS] DuckRaft sent Shield Grease to DuckRing (Storage)
+19:43:47 [INFO] [APS] DuckRaft sent Fan Daggers x5 to DuckRing (Caravan Island Doctor's note)
+19:43:47 [INFO] [APS] DuckRaft sent Deathroot to DuckRing (Tangaroa Ruben 1)
+19:43:47 [INFO] [APS] DuckRaft sent Soft Cotton x6 to DuckRing (Radio Tower Notepad 1)
+19:43:47 [INFO] [APS] DuckRaft sent Golden Rune [1] to DuckRing (Vasagatan Recording 2)
+19:43:47 [INFO] [APS] DuckRaft sent Golden Rune [2] to DuckRing (Net launcher)
+19:43:47 [INFO] [APS] DuckRaft sent Golden Rune [2] to DuckRing (Wind Turbine blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Golden Rune [3] to DuckRing (Beehive)
+19:43:47 [INFO] [APS] DuckRaft sent Golden Rune [3] to DuckRing (Good healing salve)
+19:43:47 [INFO] [APS] DuckRaft sent Golden Rune [3] to DuckRing (Water pipe blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Golden Rune [4] to DuckRing (Shear)
+19:43:47 [INFO] [APS] DuckRaft sent Golden Rune [6] to DuckRing (Stone arrow)
+19:43:47 [INFO] [APS] DuckRaft sent Golden Rune [6] to DuckRing (Varuna Point Grabber diary 3)
+19:43:47 [INFO] [APS] DuckRaft sent Golden Rune [8] to DuckRing (Balboa Island Correas diary 1)
+19:43:47 [INFO] [APS] DuckRaft sent Golden Rune [9] to DuckRing (Honey)
+19:43:47 [INFO] [APS] DuckRaft sent Golden Rune [9] to DuckRing (Varuna Point Grabber diary 6)
+19:43:47 [INFO] [APS] DuckRaft sent Golden Rune [9] to DuckRing (Advanced Biofuel Extractor blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Golden Rune [11] to DuckRing (Tangaroa Cipher)
+19:43:47 [INFO] [APS] DuckRaft sent Golden Rune [13] to DuckRing (Radio Tower Frequency to Vasagatan)
+19:43:47 [INFO] [APS] DuckRaft sent Numen's Rune to DuckRing (Temperance Star sign 1)
+19:43:47 [INFO] [APS] DuckRaft sent Hero's Rune [5] to DuckRing (Varuna Point Grabber diary 5)
+19:43:47 [INFO] [APS] DuckRaft sent Lord's Rune to DuckRing (Net canister)
+19:43:47 [INFO] [APS] DuckRaft sent Warming Stone x2 to DuckRing (Flippers)
+19:43:47 [INFO] [APS] DuckRaft sent Glintstone Stars to DuckRing (Radio Tower Briefcase)
+19:43:47 [INFO] [APS] DuckRaft sent Ambush Shard to DuckRing (Temperance Sparrow note 1)
+19:43:47 [INFO] [APS] DuckRaft sent Rock Sling to DuckRing (Empty bottle)
+19:43:47 [INFO] [APS] DuckRaft sent Black Flame Ritual to DuckRing (Firework blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Protection of the Erdtree to DuckRing (Vasagatan Recording 1)
+19:43:47 [INFO] [APS] DuckRaft sent Cure Poison to DuckRing (Caravan Island Olaf speech)
+19:43:47 [INFO] [APS] DuckRaft sent Litany of Proper Death to DuckRing (Advanced Backpack blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Agheel's Flame to DuckRing (Relay Station quest)
+19:43:47 [INFO] [APS] DuckRaft sent Pest Threads to DuckRing (Varuna Point Grabber diary 4)
+19:43:47 [INFO] [APS] DuckRaft sent Stonesword Key to DuckRing (Metal axe)
+19:43:47 [INFO] [APS] DuckRaft sent Stonesword Key to DuckRing (Balboa Island Doll murderer 1)
+19:43:47 [INFO] [APS] DuckRaft sent Stonesword Key to DuckRing (Tangaroa Gardener Diary)
+19:43:47 [INFO] [APS] DuckRaft sent Stonesword Key x3 to DuckRing (Small trophy board)
+19:43:47 [INFO] [APS] DuckRaft sent Amber Draught to DuckRing (Battery)
+19:43:47 [INFO] [APS] DuckRaft sent Mending Rune of Perfect Order to DuckRing (Fuel pipe blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Larval Tear to DuckRing (Balboa Island Correas diary 3)
+19:43:47 [INFO] [APS] DuckRaft sent Alexander's Innards to DuckRing (Balboa Island Correas diary 2)
+19:43:47 [INFO] [APS] DuckRaft sent Royal House Scroll to DuckRing (Sweep net)
+19:43:47 [INFO] [APS] DuckRaft sent Armorer's Cookbook [6] to DuckRing (Temperance Star sign 3)
+19:43:47 [INFO] [APS] DuckRaft sent Glintstone Craftsman's Cookbook [7] to DuckRing (Caravan Island Detto journal 4)
+19:43:47 [INFO] [APS] DuckRaft sent Perfumer's Cookbook [4] to DuckRing (Oxygen bottle)
+19:43:47 [INFO] [APS] DuckRaft sent Perfume Bottle to DuckRing (Olof Log 1)
+19:43:47 [INFO] [APS] DuckRaft sent Golden Seed to DuckRing (Vasagatan Recording 3)
+19:43:47 [INFO] [APS] DuckRaft sent Golden Seed to DuckRing (Electric Grill blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Golden Seed to DuckRing (Temperance Bruno diary 2)
+19:43:47 [INFO] [APS] DuckRaft sent Lost Ashes of War to DuckRing (Recycler blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Smithing Stone [1] x5 to DuckRing (Tangaroa Ruben 2)
+19:43:47 [INFO] [APS] DuckRaft sent Smithing Stone [2] x2 to DuckRing (Drinking glass)
+19:43:47 [INFO] [APS] DuckRaft sent Smithing Stone [2] x3 to DuckRing (Advanced purifier)
+19:43:47 [INFO] [APS] DuckRaft sent Smithing Stone [2] x3 to DuckRing (Advanced Headlight blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Smithing Stone [3] to DuckRing (Collection net)
+19:43:47 [INFO] [APS] DuckRaft sent Smithing Stone [4] to DuckRing (Varuna Point Grabber diary 1)
+19:43:47 [INFO] [APS] DuckRaft sent Smithing Stone [5] to DuckRing (Leather greaves)
+19:43:47 [INFO] [APS] DuckRaft sent Smithing Stone [7] to DuckRing (Caravan Island Raft town article)
+19:43:47 [INFO] [APS] DuckRaft sent Smithing Stone [7] x3 to DuckRing (Metal fishing rod)
+19:43:47 [INFO] [APS] DuckRaft sent Smithing Stone [8] to DuckRing (Tangaroa Riot Log)
+19:43:47 [INFO] [APS] DuckRaft sent Smithing Stone [8] x3 to DuckRing (Caravan Island Detto journal 1)
+19:43:47 [INFO] [APS] DuckRaft sent Somber Smithing Stone [3] to DuckRing (Varuna Point Grabber diary 2)
+19:43:47 [INFO] [APS] DuckRaft sent Somber Smithing Stone [4] x3 to DuckRing (Paint brush)
+19:43:47 [INFO] [APS] DuckRaft sent Somber Smithing Stone [5] to DuckRing (Large crop plot)
+19:43:47 [INFO] [APS] DuckRaft sent Somber Smithing Stone [6] to DuckRing (Paint mill)
+19:43:47 [INFO] [APS] DuckRaft sent Somber Smithing Stone [6] to DuckRing (Steering Wheel blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Somber Smithing Stone [6] to DuckRing (Electric Smelter blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Somber Smithing Stone [7] to DuckRing (Olof Log 3)
+19:43:47 [INFO] [APS] DuckRaft sent Ghost Glovewort [4] to DuckRing (Advanced collection net)
+19:43:47 [INFO] [APS] DuckRaft sent Sliver of Meat to DuckRing (Leather helmet)
+19:43:47 [INFO] [APS] DuckRaft sent Old Fang x2 to DuckRing (Head light blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Slumbering Egg x2 to DuckRing (Shovel)
+19:43:47 [INFO] [APS] DuckRaft sent Crab Eggs x4 to DuckRing (Temperance Star sign 2)
+19:43:47 [INFO] [APS] DuckRaft sent Hefty Beast Bone x3 to DuckRing (Hannes Letter 2)
+19:43:47 [INFO] [APS] DuckRaft sent Hefty Beast Bone x3 to DuckRing (Balboa Island Note from Henry)
+19:43:47 [INFO] [APS] DuckRaft sent String x5 to DuckRing (Tangaroa Ruben 3)
+19:43:47 [INFO] [APS] DuckRaft sent Living Jar Shard to DuckRing (Radio Tower Signalboard Trace)
+19:43:47 [INFO] [APS] DuckRaft sent Stormhawk Feather x4 to DuckRing (Balboa Island Doll murderer 4)
+19:43:47 [INFO] [APS] DuckRaft sent Trina's Lily to DuckRing (Grass plot)
+19:43:47 [INFO] [APS] DuckRaft sent Rimed Crystal Bud x5 to DuckRing (Temperance Sparrow note 2)
+19:43:47 [INFO] [APS] DuckRaft sent Mushroom x5 to DuckRing (Biofuel refiner blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Nascent Butterfly to DuckRing (Balboa Island Schedule of engineers)
+19:43:47 [INFO] [APS] DuckRaft sent Nascent Butterfly x3 to DuckRing (Stationary anchor)
+19:43:47 [INFO] [APS] DuckRaft sent Smoldering Butterfly x4 to DuckRing (Temperance Bruno diary 4)
+19:43:47 [INFO] [APS] DuckRaft sent Smoldering Butterfly x5 to DuckRing (Olof Log 2)
+19:43:47 [INFO] [APS] DuckRaft sent Smoldering Butterfly x6 to DuckRing (Engine blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Smoldering Butterfly x6 to DuckRing (Balboa Island Doll murderer 2)
+19:43:47 [INFO] [APS] DuckRaft sent Smoldering Butterfly x6 to DuckRing (Advanced Battery blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Formic Rock to DuckRing (Caravan Island Detto journal 2)
+19:43:47 [INFO] [APS] DuckRaft sent Gravel Stone x5 to DuckRing (Circuit board)
+19:43:47 [INFO] [APS] DuckRaft sent Skeletal Militiaman Ashes to DuckRing (Hammock)
+19:43:47 [INFO] [APS] DuckRaft sent Man-Serpent Ashes to DuckRing (Electric Zipline blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Cascade Power Moon to DuckSMO (Lantern)
+19:43:47 [INFO] [APS] DuckRaft sent Cascade Power Moon to DuckSMO (Radio Tower Notepad 2)
+19:43:47 [INFO] [APS] DuckRaft sent Sand Power Moon to DuckSMO (Tala (Radio Tower))
+19:43:47 [INFO] [APS] DuckRaft sent Wooded Power Moon to DuckSMO (Basic bow)
+19:43:47 [INFO] [APS] DuckRaft sent Lake Power Moon to DuckSMO (Birds nest)
+19:43:47 [INFO] [APS] DuckRaft sent Jaxi Statue to DuckSMO (Hannes Letter 1)
+19:43:47 [INFO] [APS] DuckRaft sent Pauline Statue to DuckSMO (Titanium Tools blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Chain Chomp to DuckSMO (Large trophy board)
+19:43:47 [INFO] [APS] DuckRaft sent Coins to DuckSMO (Smelter)
+19:43:47 [INFO] [APS] DuckRaft sent Coins to DuckSMO (Scrap hook)
+19:43:47 [INFO] [APS] DuckRaft sent Coins to DuckSMO (Bucket)
+19:43:47 [INFO] [APS] DuckRaft sent Coins to DuckSMO (Machete blueprint)
+19:43:47 [INFO] [APS] DuckRaft sent Coins to DuckSMO (Balboa Island Bear map)
+19:43:47 [INFO] [APS] DuckRaft sent Coins to DuckSMO (Johnny (Balboa Island))
+19:43:47 [INFO] [APS] DuckRaft sent Coins to DuckSMO (Caravan Island Detto journal 3)
+19:43:47 [INFO] [APS] DuckRaft sent Coins to DuckSMO (Tangaroa Tulley Note)
+19:43:47 [INFO] [APS] DuckRaft sent Coins to DuckSMO (Varuna Point Frequency to Temperance)
+19:43:47 [INFO] [APS] DuckRaft sent Coins to DuckSMO (Temperance Star sign 4)
+19:43:47 [INFO] [APS] DuckRaft sent Time Slow to DuckTruck (Utopia Detto map)
+19:43:47 [INFO] Granting Golden Order Greatsword (AP ID 69052, ER ID ItemId(3170000, Weapon) from Vasagatan Frequency to Balboa)
+19:43:47 [INFO] Received 1x ItemId(3170000, Weapon)
+19:43:47 [INFO] Granting Royal Greatsword (AP ID 69063, ER ID ItemId(4060000, Weapon) from Temperance Bruno diary 1)
+19:43:47 [INFO] Received 1x ItemId(4060000, Weapon)
+19:43:47 [INFO] Granting Golden Halberd (AP ID 69204, ER ID ItemId(18080000, Weapon) from Balboa Island Doll murderer 5)
+19:43:47 [INFO] Received 1x ItemId(18080000, Weapon)
+19:43:47 [INFO] Granting Frenzied Flame Seal (AP ID 69352, ER ID ItemId(34090000, Weapon) from Balboa Island Correa twins picture)
+19:43:47 [INFO] Received 1x ItemId(34090000, Weapon)
+19:43:47 [INFO] Granting Hand Ballista (AP ID 69376, ER ID ItemId(44000000, Weapon) from Medium trophy board)
+19:43:47 [INFO] Received 1x ItemId(44000000, Weapon)
+19:43:47 [INFO] Granting Leather Trousers (AP ID 69459, ER ID ItemId(40300, Protector) from Medium crop plot)
+19:43:47 [INFO] Received 1x ItemId(40300, Protector)
+19:43:47 [INFO] Granting Sanguine Noble Robe (AP ID 69565, ER ID ItemId(320100, Protector) from Tangaroa Ruben 5)
+19:43:47 [INFO] Received 1x ItemId(320100, Protector)
+19:43:47 [INFO] Granting Godskin Noble Robe (AP ID 69624, ER ID ItemId(530100, Protector) from Cookingpot)
+19:43:47 [INFO] Received 1x ItemId(530100, Protector)
+19:43:48 [INFO] Granting Lusat's Robe (AP ID 69638, ER ID ItemId(580100, Protector) from Juicer)
+19:43:48 [INFO] Received 1x ItemId(580100, Protector)
+19:43:48 [INFO] Granting Astrologer Hood (AP ID 69656, ER ID ItemId(630000, Protector) from Bolt)
+19:43:48 [INFO] Received 1x ItemId(630000, Protector)
+19:43:48 [INFO] Granting Champion Gaiters (AP ID 69692, ER ID ItemId(730300, Protector) from Caravan Island Detto journal 6)
+19:43:48 [INFO] Received 1x ItemId(730300, Protector)
+19:43:48 [INFO] Granting Maliketh's Gauntlets (AP ID 69700, ER ID ItemId(760200, Protector) from Caravan Island Frequency to Tangaroa)
+19:43:48 [INFO] Received 1x ItemId(760200, Protector)
+19:43:48 [INFO] Granting Olivinus Glintstone Crown (AP ID 69729, ER ID ItemId(831000, Protector) from Metal Spear)
+19:43:48 [INFO] Received 1x ItemId(831000, Protector)
+19:43:48 [INFO] Granting Raging Wolf Gauntlets (AP ID 69738, ER ID ItemId(860200, Protector) from Shogo (Temperance))
+19:43:48 [INFO] Received 1x ItemId(860200, Protector)
+19:43:48 [INFO] Granting Carian Knight Armor (AP ID 69797, ER ID ItemId(980100, Protector) from Fuel tank blueprint)
+19:43:48 [INFO] Received 1x ItemId(980100, Protector)
+19:43:48 [INFO] Granting Chain Coif (AP ID 69834, ER ID ItemId(1100000, Protector) from Hannes Letter 3)
+19:43:48 [INFO] Received 1x ItemId(1100000, Protector)
+19:43:48 [INFO] Granting Ash of War: Ice Spear (AP ID 69966, ER ID ItemId(20200, Gem) from Scarecrow)
+19:43:48 [INFO] Received 1x ItemId(20200, Gem)
+19:43:48 [INFO] Granting Viridian Amber Medallion (AP ID 70038, ER ID ItemId(1020, Accessory) from Tangaroa Frequency to Varuna Point)
+19:43:48 [INFO] Received 1x ItemId(1020, Accessory)
+19:43:48 [INFO] Granting Red-Feathered Branchsword (AP ID 70077, ER ID ItemId(2040, Accessory) from Electric purifier blueprint)
+19:43:48 [INFO] Received 1x ItemId(2040, Accessory)
+19:43:48 [INFO] Granting Winged Sword Insignia (AP ID 70081, ER ID ItemId(2080, Accessory) from Water tank blueprint)
+19:43:48 [INFO] Received 1x ItemId(2080, Accessory)
+19:43:48 [INFO] Granting Crepus's Vial (AP ID 70137, ER ID ItemId(6000, Accessory) from Backpack)
+19:43:48 [INFO] Received 1x ItemId(6000, Accessory)
+19:43:48 [INFO] Granting Festering Bloody Finger x5 (AP ID 70158, ER ID ItemId(111, Goods) from Temperance Frequency to Utopia)
+19:43:48 [INFO] Received 5x ItemId(111, Goods)
+19:43:48 [INFO] Granting Rune Arc (AP ID 70169, ER ID ItemId(190, Goods) from Healing salve)
+19:43:48 [INFO] Received 1x ItemId(190, Goods)
+19:43:48 [INFO] Granting Rune Arc (AP ID 70169, ER ID ItemId(190, Goods) from Caravan Island Detto journal 5)
+19:43:48 [INFO] Received 1x ItemId(190, Goods)
+19:43:48 [INFO] Granting Rune Arc (AP ID 70169, ER ID ItemId(190, Goods) from Zipline quest)
+19:43:48 [INFO] Received 1x ItemId(190, Goods)
+19:43:48 [INFO] Granting Stanching Boluses (AP ID 70181, ER ID ItemId(910, Goods) from Temperance Bruno diary 5)
+19:43:48 [INFO] Received 1x ItemId(910, Goods)
+19:43:48 [INFO] Granting Thawfrost Boluses x2 (AP ID 70184, ER ID ItemId(920, Goods) from Advanced grill)
+19:43:48 [INFO] Received 2x ItemId(920, Goods)
+19:43:48 [INFO] Granting Fireproof Dried Liver x3 (AP ID 70210, ER ID ItemId(1160, Goods) from Battery Charger quest)
+19:43:48 [INFO] Received 3x ItemId(1160, Goods)
+19:43:48 [INFO] Granting Holyproof Dried Liver (AP ID 70213, ER ID ItemId(1180, Goods) from Sprinkler)
+19:43:48 [INFO] Received 1x ItemId(1180, Goods)
+19:43:48 [INFO] Granting Silver-Pickled Fowl Foot x3 (AP ID 70217, ER ID ItemId(1190, Goods) from Tangaroa Ruben 4)
+19:43:48 [INFO] Received 3x ItemId(1190, Goods)
+19:43:48 [INFO] Granting Raw Meat Dumpling (AP ID 70225, ER ID ItemId(1235, Goods) from Metal detector blueprint)
+19:43:48 [INFO] Received 1x ItemId(1235, Goods)
+19:43:48 [INFO] Granting Raw Meat Dumpling (AP ID 70225, ER ID ItemId(1235, Goods) from Advanced Stationary Anchor blueprint)
+19:43:48 [INFO] Received 1x ItemId(1235, Goods)
+19:43:48 [INFO] Granting Starlight Shards (AP ID 70229, ER ID ItemId(1290, Goods) from Hinge)
+19:43:48 [INFO] Received 1x ItemId(1290, Goods)
+19:43:48 [INFO] Granting Freezing Grease x6 (AP ID 70269, ER ID ItemId(1470, Goods) from Utopia Captives note)
+19:43:48 [INFO] Received 6x ItemId(1470, Goods)
+19:43:48 [INFO] Granting Dragonwound Grease (AP ID 70270, ER ID ItemId(1480, Goods) from Metal arrow)
+19:43:48 [INFO] Received 1x ItemId(1480, Goods)
+19:43:48 [INFO] Granting Rot Grease (AP ID 70274, ER ID ItemId(1490, Goods) from Engine controls blueprint)
+19:43:48 [INFO] Received 1x ItemId(1490, Goods)
+19:43:48 [INFO] Granting Drawstring Holy Grease x2 (AP ID 70284, ER ID ItemId(1530, Goods) from Balboa Island Doll murderer 3)
+19:43:48 [INFO] Received 2x ItemId(1530, Goods)
+19:43:48 [INFO] Granting Shield Grease (AP ID 70291, ER ID ItemId(1690, Goods) from Storage)
+19:43:48 [INFO] Received 1x ItemId(1690, Goods)
+19:43:49 [INFO] Granting Fan Daggers x5 (AP ID 70319, ER ID ItemId(1750, Goods) from Caravan Island Doctor's note)
+19:43:49 [INFO] Received 5x ItemId(1750, Goods)
+19:43:49 [INFO] Granting Deathroot (AP ID 70352, ER ID ItemId(2090, Goods) from Tangaroa Ruben 1)
+19:43:49 [INFO] Received 1x ItemId(2090, Goods)
+19:43:49 [INFO] Granting Soft Cotton x6 (AP ID 70356, ER ID ItemId(2100, Goods) from Radio Tower Notepad 1)
+19:43:49 [INFO] Received 6x ItemId(2100, Goods)
+19:43:49 [INFO] Granting Golden Rune [1] (AP ID 70372, ER ID ItemId(2900, Goods) from Vasagatan Recording 2)
+19:43:49 [INFO] Received 1x ItemId(2900, Goods)
+19:43:49 [INFO] Granting Golden Rune [2] (AP ID 70376, ER ID ItemId(2901, Goods) from Net launcher)
+19:43:49 [INFO] Received 1x ItemId(2901, Goods)
+19:43:49 [INFO] Granting Golden Rune [2] (AP ID 70376, ER ID ItemId(2901, Goods) from Wind Turbine blueprint)
+19:43:49 [INFO] Received 1x ItemId(2901, Goods)
+19:43:49 [INFO] Granting Golden Rune [3] (AP ID 70378, ER ID ItemId(2902, Goods) from Beehive)
+19:43:49 [INFO] Received 1x ItemId(2902, Goods)
+19:43:49 [INFO] Granting Golden Rune [3] (AP ID 70378, ER ID ItemId(2902, Goods) from Good healing salve)
+19:43:49 [INFO] Received 1x ItemId(2902, Goods)
+19:43:49 [INFO] Granting Golden Rune [3] (AP ID 70378, ER ID ItemId(2902, Goods) from Water pipe blueprint)
+19:43:49 [INFO] Received 1x ItemId(2902, Goods)
+19:43:49 [INFO] Granting Golden Rune [4] (AP ID 70379, ER ID ItemId(2903, Goods) from Shear)
+19:43:49 [INFO] Received 1x ItemId(2903, Goods)
+19:43:49 [INFO] Granting Golden Rune [6] (AP ID 70381, ER ID ItemId(2905, Goods) from Stone arrow)
+19:43:49 [INFO] Received 1x ItemId(2905, Goods)
+19:43:49 [INFO] Granting Golden Rune [6] (AP ID 70381, ER ID ItemId(2905, Goods) from Varuna Point Grabber diary 3)
+19:43:49 [INFO] Received 1x ItemId(2905, Goods)
+19:43:49 [INFO] Granting Golden Rune [8] (AP ID 70383, ER ID ItemId(2907, Goods) from Balboa Island Correas diary 1)
+19:43:49 [INFO] Received 1x ItemId(2907, Goods)
+19:43:49 [INFO] Granting Golden Rune [9] (AP ID 70384, ER ID ItemId(2908, Goods) from Honey)
+19:43:49 [INFO] Received 1x ItemId(2908, Goods)
+19:43:49 [INFO] Granting Golden Rune [9] (AP ID 70384, ER ID ItemId(2908, Goods) from Varuna Point Grabber diary 6)
+19:43:49 [INFO] Received 1x ItemId(2908, Goods)
+19:43:49 [INFO] Granting Golden Rune [9] (AP ID 70384, ER ID ItemId(2908, Goods) from Advanced Biofuel Extractor blueprint)
+19:43:49 [INFO] Received 1x ItemId(2908, Goods)
+19:43:49 [INFO] Granting Golden Rune [11] (AP ID 70387, ER ID ItemId(2910, Goods) from Tangaroa Cipher)
+19:43:49 [INFO] Received 1x ItemId(2910, Goods)
+19:43:49 [INFO] Granting Golden Rune [13] (AP ID 70389, ER ID ItemId(2912, Goods) from Radio Tower Frequency to Vasagatan)
+19:43:49 [INFO] Received 1x ItemId(2912, Goods)
+19:43:49 [INFO] Granting Numen's Rune (AP ID 70390, ER ID ItemId(2913, Goods) from Temperance Star sign 1)
+19:43:49 [INFO] Received 1x ItemId(2913, Goods)
+19:43:49 [INFO] Granting Hero's Rune [5] (AP ID 70395, ER ID ItemId(2918, Goods) from Varuna Point Grabber diary 5)
+19:43:49 [INFO] Received 1x ItemId(2918, Goods)
+19:43:49 [INFO] Granting Lord's Rune (AP ID 70396, ER ID ItemId(2919, Goods) from Net canister)
+19:43:49 [INFO] Received 1x ItemId(2919, Goods)
+19:43:49 [INFO] Granting Warming Stone x2 (AP ID 70441, ER ID ItemId(3310, Goods) from Flippers)
+19:43:49 [INFO] Received 2x ItemId(3310, Goods)
+19:43:49 [INFO] Granting Glintstone Stars (AP ID 70459, ER ID ItemId(4040, Goods) from Radio Tower Briefcase)
+19:43:49 [INFO] Received 1x ItemId(4040, Goods)
+19:43:49 [INFO] Granting Ambush Shard (AP ID 70496, ER ID ItemId(4600, Goods) from Temperance Sparrow note 1)
+19:43:49 [INFO] Received 1x ItemId(4600, Goods)
+19:43:49 [INFO] Granting Rock Sling (AP ID 70506, ER ID ItemId(4710, Goods) from Empty bottle)
+19:43:49 [INFO] Received 1x ItemId(4710, Goods)
+19:43:49 [INFO] Granting Black Flame Ritual (AP ID 70537, ER ID ItemId(6240, Goods) from Firework blueprint)
+19:43:49 [INFO] Received 1x ItemId(6240, Goods)
+19:43:49 [INFO] Granting Protection of the Erdtree (AP ID 70545, ER ID ItemId(6340, Goods) from Vasagatan Recording 1)
+19:43:49 [INFO] Received 1x ItemId(6340, Goods)
+19:43:49 [INFO] Granting Cure Poison (AP ID 70555, ER ID ItemId(6440, Goods) from Caravan Island Olaf speech)
+19:43:49 [INFO] Received 1x ItemId(6440, Goods)
+19:43:50 [INFO] Granting Litany of Proper Death (AP ID 70573, ER ID ItemId(6750, Goods) from Advanced Backpack blueprint)
+19:43:50 [INFO] Received 1x ItemId(6750, Goods)
+19:43:50 [INFO] Granting Agheel's Flame (AP ID 70595, ER ID ItemId(7001, Goods) from Relay Station quest)
+19:43:50 [INFO] Received 1x ItemId(7001, Goods)
+19:43:50 [INFO] Granting Pest Threads (AP ID 70608, ER ID ItemId(7200, Goods) from Varuna Point Grabber diary 4)
+19:43:50 [INFO] Received 1x ItemId(7200, Goods)
+19:43:50 [INFO] Granting Stonesword Key (AP ID 70624, ER ID ItemId(8000, Goods) from Metal axe)
+19:43:50 [INFO] Received 1x ItemId(8000, Goods)
+19:43:50 [INFO] Granting Stonesword Key (AP ID 70624, ER ID ItemId(8000, Goods) from Balboa Island Doll murderer 1)
+19:43:50 [INFO] Received 1x ItemId(8000, Goods)
+19:43:50 [INFO] Granting Stonesword Key (AP ID 70624, ER ID ItemId(8000, Goods) from Tangaroa Gardener Diary)
+19:43:50 [INFO] Received 1x ItemId(8000, Goods)
+19:43:50 [INFO] Granting Stonesword Key x3 (AP ID 70625, ER ID ItemId(8000, Goods) from Small trophy board)
+19:43:50 [INFO] Received 3x ItemId(8000, Goods)
+19:43:50 [INFO] Granting Amber Draught (AP ID 70662, ER ID ItemId(8166, Goods) from Battery)
+19:43:50 [INFO] Received 1x ItemId(8166, Goods)
+19:43:50 [INFO] Granting Mending Rune of Perfect Order (AP ID 70672, ER ID ItemId(8182, Goods) from Fuel pipe blueprint)
+19:43:50 [INFO] Received 1x ItemId(8182, Goods)
+19:43:50 [INFO] Granting Larval Tear (AP ID 70675, ER ID ItemId(8185, Goods) from Balboa Island Correas diary 3)
+19:43:50 [INFO] Received 1x ItemId(8185, Goods)
+19:43:50 [INFO] Granting Alexander's Innards (AP ID 70694, ER ID ItemId(8222, Goods) from Balboa Island Correas diary 2)
+19:43:50 [INFO] Received 1x ItemId(8222, Goods)
+19:43:50 [INFO] Granting Royal House Scroll (AP ID 70738, ER ID ItemId(8851, Goods) from Sweep net)
+19:43:50 [INFO] Received 1x ItemId(8851, Goods)
+19:43:50 [INFO] Granting Armorer's Cookbook [6] (AP ID 70881, ER ID ItemId(9330, Goods) from Temperance Star sign 3)
+19:43:50 [INFO] Received 1x ItemId(9330, Goods)
+19:43:50 [INFO] Granting Glintstone Craftsman's Cookbook [7] (AP ID 70890, ER ID ItemId(9347, Goods) from Caravan Island Detto journal 4)
+19:43:50 [INFO] Received 1x ItemId(9347, Goods)
+19:43:50 [INFO] Granting Perfumer's Cookbook [4] (AP ID 70907, ER ID ItemId(9392, Goods) from Oxygen bottle)
+19:43:50 [INFO] Received 1x ItemId(9392, Goods)
+19:43:50 [INFO] Granting Perfume Bottle (AP ID 70921, ER ID ItemId(9510, Goods) from Olof Log 1)
+19:43:50 [INFO] Received 1x ItemId(9510, Goods)
+19:43:50 [INFO] Granting Golden Seed (AP ID 70926, ER ID ItemId(10010, Goods) from Vasagatan Recording 3)
+19:43:50 [INFO] Received 1x ItemId(10010, Goods)
+19:43:50 [INFO] Granting Golden Seed (AP ID 70926, ER ID ItemId(10010, Goods) from Electric Grill blueprint)
+19:43:50 [INFO] Received 1x ItemId(10010, Goods)
+19:43:50 [INFO] Granting Golden Seed (AP ID 70926, ER ID ItemId(10010, Goods) from Temperance Bruno diary 2)
+19:43:50 [INFO] Received 1x ItemId(10010, Goods)
+19:43:50 [INFO] Granting Lost Ashes of War (AP ID 70933, ER ID ItemId(10070, Goods) from Recycler blueprint)
+19:43:50 [INFO] Received 1x ItemId(10070, Goods)
+19:43:50 [INFO] Granting Smithing Stone [1] x5 (AP ID 70940, ER ID ItemId(10100, Goods) from Tangaroa Ruben 2)
+19:43:50 [INFO] Received 5x ItemId(10100, Goods)
+19:43:50 [INFO] Granting Smithing Stone [2] x2 (AP ID 70943, ER ID ItemId(10101, Goods) from Drinking glass)
+19:43:50 [INFO] Received 2x ItemId(10101, Goods)
+19:43:50 [INFO] Granting Smithing Stone [2] x3 (AP ID 70944, ER ID ItemId(10101, Goods) from Advanced purifier)
+19:43:50 [INFO] Received 3x ItemId(10101, Goods)
+19:43:50 [INFO] Granting Smithing Stone [2] x3 (AP ID 70944, ER ID ItemId(10101, Goods) from Advanced Headlight blueprint)
+19:43:50 [INFO] Received 3x ItemId(10101, Goods)
+19:43:50 [INFO] Granting Smithing Stone [3] (AP ID 70949, ER ID ItemId(10102, Goods) from Collection net)
+19:43:50 [INFO] Received 1x ItemId(10102, Goods)
+19:43:50 [INFO] Granting Smithing Stone [4] (AP ID 70953, ER ID ItemId(10103, Goods) from Varuna Point Grabber diary 1)
+19:43:50 [INFO] Received 1x ItemId(10103, Goods)
+19:43:50 [INFO] Granting Smithing Stone [5] (AP ID 70958, ER ID ItemId(10104, Goods) from Leather greaves)
+19:43:50 [INFO] Received 1x ItemId(10104, Goods)
+19:43:50 [INFO] Granting Smithing Stone [7] (AP ID 70970, ER ID ItemId(10106, Goods) from Caravan Island Raft town article)
+19:43:50 [INFO] Received 1x ItemId(10106, Goods)
+19:43:51 [INFO] Granting Smithing Stone [7] x3 (AP ID 70972, ER ID ItemId(10106, Goods) from Metal fishing rod)
+19:43:51 [INFO] Received 3x ItemId(10106, Goods)
+19:43:51 [INFO] Granting Smithing Stone [8] (AP ID 70976, ER ID ItemId(10107, Goods) from Tangaroa Riot Log)
+19:43:51 [INFO] Received 1x ItemId(10107, Goods)
+19:43:51 [INFO] Granting Smithing Stone [8] x3 (AP ID 70978, ER ID ItemId(10107, Goods) from Caravan Island Detto journal 1)
+19:43:51 [INFO] Received 3x ItemId(10107, Goods)
+19:43:51 [INFO] Granting Somber Smithing Stone [3] (AP ID 70988, ER ID ItemId(10162, Goods) from Varuna Point Grabber diary 2)
+19:43:51 [INFO] Received 1x ItemId(10162, Goods)
+19:43:51 [INFO] Granting Somber Smithing Stone [4] x3 (AP ID 70991, ER ID ItemId(10163, Goods) from Paint brush)
+19:43:51 [INFO] Received 3x ItemId(10163, Goods)
+19:43:51 [INFO] Granting Somber Smithing Stone [5] (AP ID 70992, ER ID ItemId(10164, Goods) from Large crop plot)
+19:43:51 [INFO] Received 1x ItemId(10164, Goods)
+19:43:51 [INFO] Granting Somber Smithing Stone [6] (AP ID 70994, ER ID ItemId(10165, Goods) from Paint mill)
+19:43:51 [INFO] Received 1x ItemId(10165, Goods)
+19:43:51 [INFO] Granting Somber Smithing Stone [6] (AP ID 70994, ER ID ItemId(10165, Goods) from Steering Wheel blueprint)
+19:43:51 [INFO] Received 1x ItemId(10165, Goods)
+19:43:51 [INFO] Granting Somber Smithing Stone [6] (AP ID 70994, ER ID ItemId(10165, Goods) from Electric Smelter blueprint)
+19:43:51 [INFO] Received 1x ItemId(10165, Goods)
+19:43:51 [INFO] Granting Somber Smithing Stone [7] (AP ID 70995, ER ID ItemId(10166, Goods) from Olof Log 3)
+19:43:51 [INFO] Received 1x ItemId(10166, Goods)
+19:43:51 [INFO] Granting Ghost Glovewort [4] (AP ID 71013, ER ID ItemId(10913, Goods) from Advanced collection net)
+19:43:51 [INFO] Received 1x ItemId(10913, Goods)
+19:43:51 [INFO] Granting Sliver of Meat (AP ID 71052, ER ID ItemId(15000, Goods) from Leather helmet)
+19:43:51 [INFO] Received 1x ItemId(15000, Goods)
+19:43:51 [INFO] Granting Old Fang x2 (AP ID 71069, ER ID ItemId(15040, Goods) from Head light blueprint)
+19:43:51 [INFO] Received 2x ItemId(15040, Goods)
+19:43:51 [INFO] Granting Slumbering Egg x2 (AP ID 71097, ER ID ItemId(15120, Goods) from Shovel)
+19:43:51 [INFO] Received 2x ItemId(15120, Goods)
+19:43:51 [INFO] Granting Crab Eggs x4 (AP ID 71103, ER ID ItemId(15130, Goods) from Temperance Star sign 2)
+19:43:51 [INFO] Received 4x ItemId(15130, Goods)
+19:43:51 [INFO] Granting Hefty Beast Bone x3 (AP ID 71120, ER ID ItemId(15341, Goods) from Hannes Letter 2)
+19:43:51 [INFO] Received 3x ItemId(15341, Goods)
+19:43:51 [INFO] Granting Hefty Beast Bone x3 (AP ID 71120, ER ID ItemId(15341, Goods) from Balboa Island Note from Henry)
+19:43:51 [INFO] Received 3x ItemId(15341, Goods)
+19:43:51 [INFO] Granting String x5 (AP ID 71129, ER ID ItemId(15400, Goods) from Tangaroa Ruben 3)
+19:43:51 [INFO] Received 5x ItemId(15400, Goods)
+19:43:51 [INFO] Granting Living Jar Shard (AP ID 71131, ER ID ItemId(15410, Goods) from Radio Tower Signalboard Trace)
+19:43:51 [INFO] Received 1x ItemId(15410, Goods)
+19:43:51 [INFO] Granting Stormhawk Feather x4 (AP ID 71142, ER ID ItemId(15430, Goods) from Balboa Island Doll murderer 4)
+19:43:51 [INFO] Received 4x ItemId(15430, Goods)
+19:43:51 [INFO] Granting Trina's Lily (AP ID 71150, ER ID ItemId(20651, Goods) from Grass plot)
+19:43:51 [INFO] Received 1x ItemId(20651, Goods)
+19:43:51 [INFO] Granting Rimed Crystal Bud x5 (AP ID 71200, ER ID ItemId(20751, Goods) from Temperance Sparrow note 2)
+19:43:51 [INFO] Received 5x ItemId(20751, Goods)
+19:43:51 [INFO] Granting Mushroom x5 (AP ID 71209, ER ID ItemId(20760, Goods) from Biofuel refiner blueprint)
+19:43:51 [INFO] Received 5x ItemId(20760, Goods)
+19:43:51 [INFO] Granting Nascent Butterfly (AP ID 71226, ER ID ItemId(20800, Goods) from Balboa Island Schedule of engineers)
+19:43:51 [INFO] Received 1x ItemId(20800, Goods)
+19:43:51 [INFO] Granting Nascent Butterfly x3 (AP ID 71228, ER ID ItemId(20800, Goods) from Stationary anchor)
+19:43:51 [INFO] Received 3x ItemId(20800, Goods)
+19:43:51 [INFO] Granting Smoldering Butterfly x4 (AP ID 71237, ER ID ItemId(20802, Goods) from Temperance Bruno diary 4)
+19:43:51 [INFO] Received 4x ItemId(20802, Goods)
+19:43:51 [INFO] Granting Smoldering Butterfly x5 (AP ID 71238, ER ID ItemId(20802, Goods) from Olof Log 2)
+19:43:51 [INFO] Received 5x ItemId(20802, Goods)
+19:43:51 [INFO] Granting Smoldering Butterfly x6 (AP ID 71239, ER ID ItemId(20802, Goods) from Engine blueprint)
+19:43:51 [INFO] Received 6x ItemId(20802, Goods)
+19:43:51 [INFO] Granting Smoldering Butterfly x6 (AP ID 71239, ER ID ItemId(20802, Goods) from Balboa Island Doll murderer 2)
+19:43:51 [INFO] Received 6x ItemId(20802, Goods)
+19:43:52 [INFO] Granting Smoldering Butterfly x6 (AP ID 71239, ER ID ItemId(20802, Goods) from Advanced Battery blueprint)
+19:43:52 [INFO] Received 6x ItemId(20802, Goods)
+19:43:52 [INFO] Granting Formic Rock (AP ID 71270, ER ID ItemId(20852, Goods) from Caravan Island Detto journal 2)
+19:43:52 [INFO] Received 1x ItemId(20852, Goods)
+19:43:52 [INFO] Granting Gravel Stone x5 (AP ID 71275, ER ID ItemId(20855, Goods) from Circuit board)
+19:43:52 [INFO] Received 5x ItemId(20855, Goods)
+19:43:52 [INFO] Granting Skeletal Militiaman Ashes (AP ID 71290, ER ID ItemId(212000, Goods) from Hammock)
+19:43:52 [INFO] Received 1x ItemId(212000, Goods)
+19:43:52 [INFO] Granting Man-Serpent Ashes (AP ID 71307, ER ID ItemId(229000, Goods) from Electric Zipline blueprint)
+19:43:52 [INFO] Received 1x ItemId(229000, Goods)

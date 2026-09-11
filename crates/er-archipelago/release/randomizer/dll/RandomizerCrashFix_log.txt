@@ -1,0 +1,6 @@
+--------------------------------------------------------------------------------
+[2026-09-11 21:39:47] RandomizerCrashFix.dll initialized with 15 edits
+[2026-09-11 21:39:47] Enemy limit patch by thefifthmatt, No Logo based on SoulSplitter by FrankvdStam, regulation check based on alt-saves by vswarte, menu patch based on eldenring-menu-input-delay-fix by rbignon
+--------------------------------------------------------------------------------
+[2026-09-11 21:47:36] RandomizerCrashFix.dll initialized with 15 edits
+[2026-09-11 21:47:36] Enemy limit patch by thefifthmatt, No Logo based on SoulSplitter by FrankvdStam, regulation check based on alt-saves by vswarte, menu patch based on eldenring-menu-input-delay-fix by rbignon

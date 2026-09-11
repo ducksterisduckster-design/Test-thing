@@ -1,0 +1,19 @@
+# DO NOT MODIFY THIS FILE!
+# AUTO-GENERATED
+# CONTENTS WILL BE AUTOMATICALLY OVERWRITTEN
+
+# Produced by Elden Ring Randomizer v0.12.2
+# <hash>72cd7d03fc9aaa07ed802b18521d799b</hash>
+
+[modengine]
+debug = false
+external_dlls = [
+    "C:\\Users\\thibo\\Desktop\\ER client\\crates\\er-archipelago\\release\\er_archipelago.dll",
+    "C:\\Users\\thibo\\Desktop\\ER client\\crates\\er-archipelago\\release\\randomizer\\dll\\RandomizerCrashFix.dll",
+]
+[extension.mod_loader]
+enabled = true
+loose_params = false
+mods = [
+    { enabled = true, name = "randomizer", path = "C:\\Users\\thibo\\Desktop\\ER client\\crates\\er-archipelago\\release\\randomizer" },
+]

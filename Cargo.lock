@@ -56,9 +56,9 @@ checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
 [[package]]
 name = "archipelago_rs"
 version = "3.0.0"
-source = "git+https://github.com/FantaTanked/archipelago_rs?branch=er-client-version-0.6.6#77ba69923e7f58e4152be9f326a6da4be58c2d57"
+source = "git+https://github.com/ducksterisduckster-design/archipelago-rs#b803cfa9f3d3c4b69e9fe6a1c6d96f256226d5f2"
 dependencies = [
- "bitflags 2.13.1",
+ "bitflags 2.13.2",
  "log",
  "native-tls",
  "oneshot",
@@ -254,9 +254,9 @@ dependencies = [
 
 [[package]]
 name = "base64"
-version = "0.22.1"
+version = "0.23.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
+checksum = "ac07cdecf99051d9a5238b80f35af32cdeba5b336e55d957b318b50137e18da5"
 
 [[package]]
 name = "bincode"
@@ -306,9 +306,9 @@ checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 
 [[package]]
 name = "bitflags"
-version = "2.13.1"
+version = "2.13.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b588b76d00fde79687d7646a9b5bdf3cc0f655e0bbd080335a95d7e96f3587da"
+checksum = "3ded4057c258ba199e2d26386d3af3780957ecaee6c4ef4041c6b4b8b97c0b06"
 
 [[package]]
 name = "block-buffer"
@@ -505,9 +505,9 @@ dependencies = [
 
 [[package]]
 name = "darling"
-version = "0.23.0"
+version = "0.24.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "25ae13da2f202d56bd7f91c25fba009e7717a1e4a1cc98a76d844b65ae912e9d"
+checksum = "ed17f5901b6630b993ca003def43f2f8ef4014fc13b047b57aad617ff32bc2ec"
 dependencies = [
  "darling_core",
  "darling_macro",
@@ -515,26 +515,26 @@ dependencies = [
 
 [[package]]
 name = "darling_core"
-version = "0.23.0"
+version = "0.24.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9865a50f7c335f53564bb694ef660825eb8610e0a53d3e11bf1b0d3df31e03b0"
+checksum = "6837e2cf7485aaae18f86181d2f0e9a7ed297a025e220aeabf63fdebd3a2ddff"
 dependencies = [
  "ident_case",
  "proc-macro2",
  "quote",
  "strsim",
- "syn 2.0.119",
+ "syn 3.0.5",
 ]
 
 [[package]]
 name = "darling_macro"
-version = "0.23.0"
+version = "0.24.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ac3984ec7bd6cfa798e62b4a642426a5be0e68f9401cfc2a01e3fa9ea2fcdb8d"
+checksum = "2ac7135c3ef02b2f7833bbeb1be5ba7f966dcde8a87c6b87f65a778d71a02785"
 dependencies = [
  "darling_core",
  "quote",
- "syn 2.0.119",
+ "syn 3.0.5",
 ]
 
 [[package]]
@@ -626,7 +626,7 @@ version = "0.13.0"
 source = "git+https://github.com/FantaTanked/fromsoft-rs?rev=a3fb61d40a40cd8eb114b4e1a900390ce64b2872#a3fb61d40a40cd8eb114b4e1a900390ce64b2872"
 dependencies = [
  "bitfield",
- "bitflags 2.13.1",
+ "bitflags 2.13.2",
  "cxx-stl",
  "encoding_rs",
  "fromsoftware-shared 0.13.0 (git+https://github.com/FantaTanked/fromsoft-rs?rev=a3fb61d40a40cd8eb114b4e1a900390ce64b2872)",
@@ -641,10 +641,10 @@ dependencies = [
 [[package]]
 name = "eldenring"
 version = "0.13.0"
-source = "git+https://github.com/ducksterisduckster-design/fromsoft-rs#d365be5147fe506421dda22aa5689ea6f044f741"
+source = "git+https://github.com/ducksterisduckster-design/fromsoft-rs#7c07d31f5e67964da674c3a92a177703a856202d"
 dependencies = [
  "bitfield",
- "bitflags 2.13.1",
+ "bitflags 2.13.2",
  "cxx-stl",
  "encoding_rs",
  "fromsoftware-shared 0.13.0 (git+https://github.com/ducksterisduckster-design/fromsoft-rs)",
@@ -659,9 +659,9 @@ dependencies = [
 [[package]]
 name = "eldenring-extra"
 version = "0.2.0"
-source = "git+https://github.com/ducksterisduckster-design/fromsoft-extra#745a582e34c71968aa18889d301a8dcbcb2785f4"
+source = "git+https://github.com/ducksterisduckster-design/fromsoft-extra#b5f25572254fc3344b6082c8817590c8b96c2d7c"
 dependencies = [
- "bitflags 2.13.1",
+ "bitflags 2.13.2",
  "eldenring 0.13.0 (git+https://github.com/FantaTanked/fromsoft-rs?rev=a3fb61d40a40cd8eb114b4e1a900390ce64b2872)",
  "fromsoftware-extra-shared",
  "fromsoftware-shared 0.13.0 (git+https://github.com/FantaTanked/fromsoft-rs?rev=a3fb61d40a40cd8eb114b4e1a900390ce64b2872)",
@@ -673,9 +673,9 @@ dependencies = [
 
 [[package]]
 name = "encoding_rs"
-version = "0.8.40"
+version = "0.8.41"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2a7a45518d2863d18aa47f4a0cf9faec2aa4304cc09df5e41299f276b3ad135e"
+checksum = "7b5ef0006ac9ab233c38522f5ae99cae3625151de8f706cacee1cba4b8e2832a"
 dependencies = [
  "cfg-if",
  "core_detect",
@@ -793,7 +793,7 @@ dependencies = [
 [[package]]
 name = "fromsoftware-extra-shared"
 version = "0.2.0"
-source = "git+https://github.com/ducksterisduckster-design/fromsoft-extra#745a582e34c71968aa18889d301a8dcbcb2785f4"
+source = "git+https://github.com/ducksterisduckster-design/fromsoft-extra#b5f25572254fc3344b6082c8817590c8b96c2d7c"
 dependencies = [
  "ilhook",
 ]
@@ -803,7 +803,7 @@ name = "fromsoftware-shared"
 version = "0.13.0"
 source = "git+https://github.com/FantaTanked/fromsoft-rs?rev=a3fb61d40a40cd8eb114b4e1a900390ce64b2872#a3fb61d40a40cd8eb114b4e1a900390ce64b2872"
 dependencies = [
- "bitflags 2.13.1",
+ "bitflags 2.13.2",
  "from-singleton",
  "fromsoftware-shared-macros 0.13.0 (git+https://github.com/FantaTanked/fromsoft-rs?rev=a3fb61d40a40cd8eb114b4e1a900390ce64b2872)",
  "glam",
@@ -817,9 +817,9 @@ dependencies = [
 [[package]]
 name = "fromsoftware-shared"
 version = "0.13.0"
-source = "git+https://github.com/ducksterisduckster-design/fromsoft-rs#d365be5147fe506421dda22aa5689ea6f044f741"
+source = "git+https://github.com/ducksterisduckster-design/fromsoft-rs#7c07d31f5e67964da674c3a92a177703a856202d"
 dependencies = [
- "bitflags 2.13.1",
+ "bitflags 2.13.2",
  "from-singleton",
  "fromsoftware-shared-macros 0.13.0 (git+https://github.com/ducksterisduckster-design/fromsoft-rs)",
  "glam",
@@ -844,7 +844,7 @@ dependencies = [
 [[package]]
 name = "fromsoftware-shared-macros"
 version = "0.13.0"
-source = "git+https://github.com/ducksterisduckster-design/fromsoft-rs#d365be5147fe506421dda22aa5689ea6f044f741"
+source = "git+https://github.com/ducksterisduckster-design/fromsoft-rs#7c07d31f5e67964da674c3a92a177703a856202d"
 dependencies = [
  "inflections",
  "proc-macro2",
@@ -1020,11 +1020,11 @@ checksum = "6dbf3de79e51f3d586ab4cb9d5c3e2c14aa28ed23d180cf89b4df0454a69cc87"
 
 [[package]]
 name = "hudhook"
-version = "0.9.2"
+version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "381fee177b613a67319779752059371cf6bcdb64bd287d9c22bc38b2a0660fbb"
+checksum = "6d7f3def5b8fafd0bd3acf6a63fdbe5c637963ce1d207192ef3c47bd4f28b394"
 dependencies = [
- "bitflags 2.13.1",
+ "bitflags 2.13.2",
  "cc",
  "gl_generator",
  "imgui",
@@ -1081,7 +1081,7 @@ version = "2.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c40cf69be52a2e8e2a375673ecfde90b7790aa9d8aa55dd463dc7e8faacb89c9"
 dependencies = [
- "bitflags 2.13.1",
+ "bitflags 2.13.2",
  "iced-x86",
  "libc",
  "regex",
@@ -1291,24 +1291,23 @@ checksum = "e53debba6bda7a793e5f99b8dacf19e626084f525f7829104ba9898f367d85ff"
 
 [[package]]
 name = "multiversion"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7edb7f0ff51249dfda9ab96b5823695e15a052dc15074c9dbf3d118afaf2c201"
+checksum = "b4ca4bea16ffc3f443cf7d866912118196bfef4c6a1556ca00f9f9b00bb43f7c"
 dependencies = [
  "multiversion-macros",
- "target-features",
 ]
 
 [[package]]
 name = "multiversion-macros"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b093064383341eb3271f42e381cb8f10a01459478446953953c75d24bd339fc0"
+checksum = "0d416831a7317ef4b08bee00b69cbbb9c8763da7959a7026244d6266869f9c83"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.119",
- "target-features",
+ "rustversion",
+ "syn 3.0.5",
 ]
 
 [[package]]
@@ -1419,7 +1418,7 @@ version = "0.10.81"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "77823a27f0babb03091cb9ed9ef80af3b39dbc82f97e8fa530374b7dafd87a45"
 dependencies = [
- "bitflags 2.13.1",
+ "bitflags 2.13.2",
  "cfg-if",
  "foreign-types",
  "libc",
@@ -1662,7 +1661,7 @@ version = "0.5.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ed2bf2547551a7053d6fdfafda3f938979645c44812fbfcda098faae3f1a362d"
 dependencies = [
- "bitflags 2.13.1",
+ "bitflags 2.13.2",
 ]
 
 [[package]]
@@ -1749,7 +1748,7 @@ version = "1.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
 dependencies = [
- "bitflags 2.13.1",
+ "bitflags 2.13.2",
  "errno",
  "libc",
  "linux-raw-sys",
@@ -1849,7 +1848,7 @@ version = "3.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b7f4bc775c73d9a02cde8bf7b2ec4c9d12743edf609006c7facc23998404cd1d"
 dependencies = [
- "bitflags 2.13.1",
+ "bitflags 2.13.2",
  "core-foundation",
  "core-foundation-sys",
  "libc",
@@ -1922,9 +1921,9 @@ dependencies = [
 
 [[package]]
 name = "serde_with"
-version = "3.22.0"
+version = "3.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ee78f1fbe43ac4a0e47aadb3dbd357b69eb0d3793e948624cd03dd2750ab1c0a"
+checksum = "935177bb8c0cd8ca1a4e6d1a2ac8988bea69cab4f9d3a31311e012ad27868ea4"
 dependencies = [
  "base64",
  "bs58",
@@ -1943,14 +1942,14 @@ dependencies = [
 
 [[package]]
 name = "serde_with_macros"
-version = "3.22.0"
+version = "3.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8705578779c2b6bd90d84d66eb2e206b708b1a4d7b9f17641b293545bf1c7e46"
+checksum = "1d607aa01a3cb0ad757d6fd216136910db3c97b102fe686585689615a02dbcdc"
 dependencies = [
  "darling",
  "proc-macro2",
  "quote",
- "syn 2.0.119",
+ "syn 3.0.5",
 ]
 
 [[package]]
@@ -1971,7 +1970,7 @@ dependencies = [
  "anyhow",
  "archipelago_rs",
  "backtrace",
- "bitflags 2.13.1",
+ "bitflags 2.13.2",
  "chrono",
  "clipboard-win",
  "fromsoftware-shared 0.13.0 (git+https://github.com/ducksterisduckster-design/fromsoft-rs)",
@@ -2034,9 +2033,9 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
 
 [[package]]
 name = "smallvec"
-version = "1.16.0"
+version = "1.16.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b9be42f50aa861c555654aa3a37f52f4b1074bacf4e48fe0ef7fa584e80f1f0f"
+checksum = "ba467056f1b547ed52077911161fc86985becbc60e8e1857c8a144dab0def891"
 
 [[package]]
 name = "smol"
@@ -2088,12 +2087,6 @@ dependencies = [
  "quote",
  "unicode-ident",
 ]
-
-[[package]]
-name = "target-features"
-version = "0.1.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c1bbb9f3c5c463a01705937a24fdabc5047929ac764b2d5b9cf681c1f5041ed5"
 
 [[package]]
 name = "tempfile"
@@ -2224,9 +2217,9 @@ dependencies = [
 
 [[package]]
 name = "toml_edit"
-version = "0.25.13+spec-1.1.0"
+version = "0.25.15+spec-1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6975367e4d2ef766d86af01ffad14b622fecc8d4357a998fbc4deb6e9bacaf9b"
+checksum = "1340ea94a5856333492c9064b02c778b191dd2c853778d9609debdcdfea3a614"
 dependencies = [
  "indexmap 2.14.2",
  "toml_datetime",
@@ -2315,7 +2308,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39c24bc2141770ebc4a3703143f0cbdf275ed8d03cf7f5dda754c2f60c758ed4"
 dependencies = [
  "arrayvec",
- "bitflags 2.13.1",
+ "bitflags 2.13.2",
  "bumpalo",
  "nonmax",
  "smallvec",
@@ -2898,18 +2891,18 @@ checksum = "e450f9b2ed1dff33c94c12589a87338689467b9c4f5d8a5710bd09a847d2c8a7"
 
 [[package]]
 name = "zerocopy"
-version = "0.8.56"
+version = "0.8.57"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "556764e583adb45a9f8d413c2a147fa7e8d821e48e12b14fd560b607998b75eb"
+checksum = "d35102a9f36d089ccae9e4c6802bc118be4487b80aaffc0ab4e0cf5ce92d2873"
 dependencies = [
  "zerocopy-derive",
 ]
 
 [[package]]
 name = "zerocopy-derive"
-version = "0.8.56"
+version = "0.8.57"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f2ab42fc20575779bd240faa45f94a74256f755c0fa9e89f0ede20d91d0cdfc1"
+checksum = "146c01f5ab44258da43cf276c74a2763db2ff3969c9c652c3f2de07041d0b2bc"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2931,14 +2924,14 @@ checksum = "29666d0abbfad1e3dc4dcf6144730dd3a3ab225bbbdac83319345b1b44ccfc1b"
 [[patch.unused]]
 name = "darksouls3"
 version = "0.14.0"
-source = "git+https://github.com/vswarte/fromsoftware-rs#e0948c8d64594b79785e9490877baacea5605a9d"
+source = "git+https://github.com/vswarte/fromsoftware-rs#16d266146bcc7e896ac0d9a2c020e0d4c07baf52"
 
 [[patch.unused]]
 name = "fromsoftware-shared"
 version = "0.14.0"
-source = "git+https://github.com/vswarte/fromsoftware-rs#e0948c8d64594b79785e9490877baacea5605a9d"
+source = "git+https://github.com/vswarte/fromsoftware-rs#16d266146bcc7e896ac0d9a2c020e0d4c07baf52"
 
 [[patch.unused]]
 name = "sekiro"
 version = "0.14.0"
-source = "git+https://github.com/vswarte/fromsoftware-rs#e0948c8d64594b79785e9490877baacea5605a9d"
+source = "git+https://github.com/vswarte/fromsoftware-rs#16d266146bcc7e896ac0d9a2c020e0d4c07baf52"

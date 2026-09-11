@@ -12,7 +12,7 @@ repository = "https://github.com/fswap/fromsoftware-archipelago"
 
 [workspace.dependencies]
 anyhow = "1.0.102"
-archipelago_rs = { git = "https://github.com/FantaTanked/archipelago_rs", branch = "er-client-version-0.6.6"}
+archipelago_rs = { git = "https://github.com/ducksterisduckster-design/archipelago-rs" }
 bincode = "2.0.0"
 fromsoftware-shared = { git = "https://github.com/ducksterisduckster-design/fromsoft-rs" }
 hudhook = "0.9.0"
