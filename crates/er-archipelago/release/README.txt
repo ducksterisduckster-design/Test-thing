@@ -26,3 +26,5 @@ This release stands on the shoulders of many people who have worked tirelessly t
 * Debugging help, coding assistance, and patches from members of the Archipelago discord server.
 
 * The players who've just played these mods for fun. All of this is for you.
+
+* Fantatanked who made the first version of this client
