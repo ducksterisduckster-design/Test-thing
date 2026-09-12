@@ -1,12 +1,9 @@
 ## From Software Archipelago Clients
 
 This is a shared repo for several From Software Archipelago clients that share
-the same underlying infrastructure. It currently contains a client for Dark
-Souls III, with support for Sekiro and Elden Ring planned for the future.
+the same underlying infrastructure. It currently has a W.I.P of the eldenring client inside of it.
 
-See [archipelago.gg] for general information about Archipelago, and [the Dark
-Souls III setup guide] for instructions on setting up and using the Dark Souls
-III Archipelago mod.
+See [archipelago.gg] for general information about Archipelago
 
 ### Other FromSoft Archipelago Clients
 
