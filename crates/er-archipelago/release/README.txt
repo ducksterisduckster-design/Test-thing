@@ -1,6 +1,6 @@
 # Elden Ring Archipelago Randomizer 0.8.3
 
-This package contains the static randomizer and the Elden Ring mod for integrating _Elden Ring_ into the [Archipelago] multiworld randomizer. You can download this from the "Assets" dropdown on [the Releases page]. If you're already reading this on the Releases page, it's just below this documentation. Setup documentation coming soon.
+This release only has the client without randomizer since this is still a W.I.P
 
 [Archipelago]: https://archipelago.gg
 [the Releases page]: https://github.com/ducksterisduckster-design/Elden-Ring-client/tree/main/crates/er-archipelago/release
