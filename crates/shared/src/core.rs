@@ -83,12 +83,17 @@ impl<G: Game, S: DeserializeOwned + Send + 'static> CoreBase<G, S> {
 
     /// Creates a new [ClientConnection] based on the connection information in [config].
     fn new_connection(game: Ustr, config: &Config<G>) -> ap::Connection<S> {
+        let mut tags = vec![];
+        if config.death_link_enabled() {
+            tags.push("DeathLink");
+        }
+
         let mut options = ap::ConnectionOptions::new()
             .receive_items(ap::ItemHandling::OtherWorlds {
                 own_world: false,
                 starting_inventory: true,
             })
-            .tags(vec!["DeathLink"]);
+            .tags(tags);
         if let Some(password) = config.password() {
             options = options.password(password);
         }
@@ -151,6 +156,16 @@ impl<G: Game, S: DeserializeOwned + Send + 'static> CoreBase<G, S> {
         self.config.save()
     }
 
+    /// Updates whether DeathLink is enabled for this connection and
+    /// reconnects, since the "DeathLink" tag we advertise to the server is
+    /// only set at connection time.
+    pub(crate) fn update_death_link_enabled(&mut self, death_link_enabled: bool) -> Result<()> {
+        self.config.set_death_link_enabled(death_link_enabled);
+        self.config.save()?;
+        self.connection = Self::new_connection(self.game, &self.config);
+        Ok(())
+    }
+
     /// If this client has encountered a fatal error, takes ownership of it.
     pub(crate) fn take_error(&mut self) -> Option<Error> {
         if let Some(err) = self.error.take() {
@@ -162,7 +177,7 @@ impl<G: Game, S: DeserializeOwned + Send + 'static> CoreBase<G, S> {
     }
 
     /// Returns the current user config.
-    pub(crate) fn config(&self) -> &Config<G> {
+    pub fn config(&self) -> &Config<G> {
         &self.config
     }
 
@@ -350,8 +365,42 @@ pub trait Core: Send + Sized {
 
     /// Consumes and returns all the as-yet-unprocessed events from the player's
     /// save.
+    ///
+    /// As a side effect, this also handles [ap::Event::DeathLink]: if the
+    /// player has DeathLink enabled, it kills the local player via
+    /// [Game::kill_player]. This happens here rather than requiring each game
+    /// to match on it in the events it gets back, since killing the player
+    /// doesn't need any game-specific state. Since DeathLink events are only
+    /// ever buffered while connected (see [CoreBase::update_always]), and this
+    /// is only ever called from [Core::update_live] -- which only runs once a
+    /// save is loaded and past the initial grace period -- it's safe to touch
+    /// the game's in-memory player state here.
     fn take_events(&mut self) -> Vec<ap::Event> {
-        mem::take(&mut self.base_mut().event_buffer)
+        let events = mem::take(&mut self.base_mut().event_buffer);
+
+        if self.base().config().death_link_enabled() {
+            for event in &events {
+                let ap::Event::DeathLink { source, cause, .. } = event else {
+                    continue;
+                };
+
+                let reason = cause.clone().unwrap_or_else(|| format!("{source} died."));
+                self.log(vec![
+                    ap::RichText::Color {
+                        text: "DeathLink: ".into(),
+                        color: ap::TextColor::Red,
+                    },
+                    reason.into(),
+                ]);
+
+                // Safety: see the doc comment above.
+                unsafe {
+                    Self::Game::kill_player();
+                }
+            }
+        }
+
+        events
     }
 
     /// Runs the core logic of the mod. This may set [error], which should be

@@ -13,6 +13,10 @@ fn default_show_progression_item_popups() -> bool {
     false
 }
 
+fn default_death_link_enabled() -> bool {
+    true
+}
+
 /// The configuration file for the Archipelago connection.
 #[derive(Deserialize, Serialize)]
 pub struct Config<G: Game> {
@@ -25,6 +29,8 @@ pub struct Config<G: Game> {
     show_item_popups: bool,
     #[serde(default = "default_show_progression_item_popups")]
     show_progression_item_popups: bool,
+    #[serde(default = "default_death_link_enabled")]
+    death_link_enabled: bool,
     #[serde(skip)]
     _marker: PhantomData<G>,
 }
@@ -97,6 +103,16 @@ impl<G: Game> Config<G> {
     /// item pickup popups when regular incoming item popups are disabled.
     pub fn set_show_progression_item_popups(&mut self, show_progression_item_popups: bool) {
         self.show_progression_item_popups = show_progression_item_popups;
+    }
+
+    /// Returns whether DeathLink is enabled for this connection.
+    pub fn death_link_enabled(&self) -> bool {
+        self.death_link_enabled
+    }
+
+    /// Sets whether DeathLink is enabled for this connection.
+    pub fn set_death_link_enabled(&mut self, death_link_enabled: bool) {
+        self.death_link_enabled = death_link_enabled;
     }
 
     /// Returns the slot that the config was created with.

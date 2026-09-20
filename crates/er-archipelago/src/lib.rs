@@ -1,6 +1,7 @@
 use eldenring_extra::input::InputBlocker;
 use windows::Win32::{Foundation::HINSTANCE, System::SystemServices::DLL_PROCESS_ATTACH};
 
+mod checks;
 mod core;
 mod game;
 mod item;
@@ -9,10 +10,9 @@ mod slot_data;
 
 use save_data::SaveData;
 
-/// The entrypoint called when the DLL is first loaded.
+/// The DLL's entry point. Called when the DLL first loads.
 ///
-/// This is where we set up the whole mod and start waiting for the app itself
-/// to be initialized enough for us to start doing real things.
+/// Sets up the mod, then waits for the game to be ready enough to do real work.
 #[unsafe(no_mangle)]
 extern "C" fn DllMain(_: HINSTANCE, call_reason: u32) -> bool {
     if call_reason != DLL_PROCESS_ATTACH {
@@ -22,10 +22,10 @@ extern "C" fn DllMain(_: HINSTANCE, call_reason: u32) -> bool {
     shared::handle_panics::<game::EldenRing>();
     shared::start_logger();
 
-    // Set up hooks in the main thread to mitigate the risk of the game code
-    // executing them while they're being modified.
+    // Hooks go in on the main thread, so the game can't be running the code
+    // while we patch it.
 
-    // Safety: We only hook these functions here specifically.
+    // Safety: we only hook these functions, and only here.
     unsafe {
         SaveData::hook();
         item::hook_items();

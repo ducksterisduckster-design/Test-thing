@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use anyhow::Result;
 use eldenring::{
-    cs::{CSFeManHudState, CSFeManImp, CSTaskGroupIndex, CSTaskImp, MapItemMan},
+    cs::{CSFeManHudState, CSFeManImp, CSTaskGroupIndex, CSTaskImp, MapItemMan, PlayerIns},
     fd4::FD4TaskData,
 };
 use fromsoftware_shared::{FromStatic, SharedTaskImpExt};
@@ -26,9 +26,8 @@ impl shared::Game for EldenRing {
     }
 
     unsafe fn is_main_menu() -> bool {
-        // If MapItemMan isn't available, that usually means we're on the
-        // main menu. There's probably a better way to detect that but we
-        // don't know it yet.
+        // If MapItemMan doesn't exist, we're probably on the main menu. There
+        // may be a better check, but we haven't found one yet.
         unsafe { MapItemMan::instance() }.is_err()
     }
 
@@ -43,6 +42,26 @@ impl shared::Game for EldenRing {
                 CSFeManHudState::ShowAll | CSFeManHudState::PopupMenu
             )
         })
+    }
+
+    unsafe fn kill_player() {
+        if let Ok(player) = unsafe { PlayerIns::local_player_mut() } {
+            player.chr_ins.modules.data.hp = 0;
+        }
+    }
+}
+
+impl EldenRing {
+    /// Whether the local player is dead. Returns `false` if there's no player
+    /// loaded (like on the main menu).
+    ///
+    /// ## Safety
+    ///
+    /// Call this on the main thread, with no other references to the game's
+    /// internal state alive.
+    pub unsafe fn is_player_dead() -> bool {
+        unsafe { PlayerIns::local_player() }
+            .is_ok_and(|player| player.chr_ins.chr_flags1c5.death_flag())
     }
 }
 

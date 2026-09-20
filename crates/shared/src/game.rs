@@ -63,6 +63,24 @@ pub trait Game: Send + Sync + 'static {
     unsafe fn is_menu_open() -> bool {
         false
     }
+
+    /// Kills the local player, in response to a DeathLink received from
+    /// another slot.
+    ///
+    /// This is only ever invoked while a save is loaded and past the initial
+    /// grace period (see [CoreBase]'s `GRACE_PERIOD`), so implementations
+    /// don't need to guard against being called at the main menu. They should
+    /// still no-op gracefully if the relevant game state happens to be
+    /// unavailable, the same as other unsafe accessors on this trait.
+    ///
+    /// By default, this does nothing, so games don't need to implement it
+    /// until they wire up DeathLink support.
+    ///
+    /// ## Safety
+    ///
+    /// This must be called on the main thread when no other references exist to
+    /// the game's internal state.
+    unsafe fn kill_player() {}
 }
 
 /// An enum of From Software games, for situtations where the shared code just
