@@ -1,0 +1,11 @@
+[modengine]
+debug = false
+external_dlls = [
+    "randomizer\\dll\\RandomizerCrashFix.dll",
+]
+[extension.mod_loader]
+enabled = true
+loose_params = false
+mods = [
+    { enabled = true, name = "randomizer", path = "randomizer" },
+]

@@ -1,5 +1,5 @@
 use std::{
-    collections::HashSet,
+    collections::{HashMap, HashSet},
     str::FromStr,
     time::{Duration, Instant},
 };
@@ -14,38 +14,122 @@ use log::*;
 #[cfg(debug_assertions)]
 use regex_macro::regex;
 
-use crate::item::{EquipParamExt, ItemIdExt, RegulationManager, remove_queued_display_items};
+use crate::checks;
+use crate::item::{EquipParamExt, ItemIdExt, RegulationManager, remove_sent_display_items};
 use crate::save_data::*;
-use crate::slot_data::{EventFlagId, I64Key, SlotData};
+use crate::slot_data::{EventFlagId, I64Key, InventorySnapshot, SlotData};
 use shared::{Core as SharedCore, CoreBase};
 
 const RECEIVED_ITEM_GRANT_INTERVAL: Duration = Duration::from_millis(33);
 const ITEM_GET_DISPLAY_SUPPRESSION_DURATION: Duration = Duration::from_millis(75);
 
-/// The core of the Archipelago mod. This is responsible for running the
-/// non-UI-related game logic and interacting with the Archipelago client.
+/// How many locations `poll_flag_based_checks` looks at per frame.
+///
+/// There are about five thousand flag-backed locations and reading a flag isn't
+/// free, so checking them all every frame would cost frame time for nothing: a
+/// check the player just triggered is just as good a few frames later. At this
+/// batch size the whole table gets swept about three times a second at 60fps,
+/// and it shrinks as locations are found.
+const FLAG_POLL_BATCH_SIZE: usize = 256;
+
+/// How often the priority location markers are recomputed. Each pass walks
+/// every marker's requirement tree, so it runs on a timer instead of every
+/// frame. A marker showing up a quarter second late is unnoticeable.
+const MARKER_SYNC_INTERVAL: Duration = Duration::from_millis(250);
+
+/// How often region-lock item flags are re-derived. Same idea as
+/// [MARKER_SYNC_INTERVAL]: region locks are one-way and never need to react
+/// within a single frame.
+const REGION_LOCK_SYNC_INTERVAL: Duration = Duration::from_millis(250);
+
+/// How often the inventory is swept for placeholder items. The sweep walks
+/// every carried item, and a placeholder can wait a few frames before it's
+/// handled.
+const INVENTORY_SCAN_INTERVAL: Duration = Duration::from_millis(100);
+
+/// How often the virtual-location passes (expansion, local grants, foreign
+/// notifications) run when no new location has been checked. They also run
+/// right away whenever the checked set changes, so this is just a backstop for
+/// state that changed elsewhere (like a late server connection).
+const VIRTUAL_LOCATION_SYNC_INTERVAL: Duration = Duration::from_millis(250);
+
+/// How long to wait for the server's answer to the location scout before asking
+/// again. Without this, an answer that never arrives would block every
+/// by-location grant for the whole session.
+const LOCAL_ITEM_SCOUT_TIMEOUT: Duration = Duration::from_secs(15);
+
+/// Stored in `SaveData::local_virtual_items_granted` once a save has been
+/// baselined for by-location grants. Never a real location ID.
+const LOCAL_LOCATION_BASELINE_MARKER: i64 = -1;
+
+/// Checks an outstanding location scout and returns the result once the server
+/// has answered. Boxed so this file doesn't have to name the Archipelago
+/// client's channel type.
+type ScoutPoll = Box<dyn FnMut() -> Option<Result<Vec<ap::LocatedItem>, ap::Error>> + Send>;
+
+/// The core of the Archipelago mod. Runs the non-UI game logic and talks to the
+/// Archipelago client.
 pub struct Core {
     /// The cross-game core.
     base: CoreBase<crate::game::EldenRing, SlotData>,
 
-    /// The time we last granted an item to the player. Used to throttle incoming
-    /// item bursts without making release queues take minutes to drain.
+    /// When we last granted an item to the player. Used to throttle bursts of
+    /// incoming items without making release queues take minutes to drain.
     last_item_time: Instant,
 
-    /// The number of locations sent to the server in this session. This always
-    /// starts at 0 when the player boots the game again to ensure that they
-    /// resend any locations that may have been missed.
+    /// How many locations we've sent to the server this session. Starts at 0 on
+    /// every boot, so we resend anything that might have been missed.
     locations_sent: usize,
 
-    /// Whether the player has achieved their goal and sent that information to
-    /// the Archipelago server. This is stored here rather than in the save data
-    /// so that it's resent every time the player starts the game, just in case
-    /// it got lost in transit.
+    /// Whether the player has reached their goal and we've told the server.
+    /// Kept here instead of in the save data so it's resent on every launch, in
+    /// case it got lost.
     sent_goal: bool,
 
-    /// Item display param rows that are currently suppressed for incoming
-    /// Archipelago grants and need to be restored later.
+    /// Item display param rows that are suppressed for incoming Archipelago
+    /// grants and need to be restored later.
     item_get_display_restores: Vec<ItemGetDisplayRestore>,
+
+    /// Locations still waiting to be seen as checked, each with the flags that
+    /// would satisfy it. Used for flag-based check detection (item lots and
+    /// shop purchases that never touch the inventory). Built the first time the
+    /// regulation is available, since it doesn't change for the rest of the
+    /// session, and drained as locations are found.
+    pending_flag_checks: Option<Vec<(i64, Vec<EventFlagId>)>>,
+
+    /// How far through `pending_flag_checks` the current sweep has got.
+    flag_poll_cursor: usize,
+
+    /// Timers for the periodic sync passes, so they don't run every frame.
+    last_marker_sync: Option<Instant>,
+    last_region_lock_sync: Option<Instant>,
+    last_inventory_scan: Option<Instant>,
+    last_virtual_location_sync: Option<Instant>,
+
+    /// How many locations were checked at the end of the last tick. Used to
+    /// notice when a new one comes in.
+    locations_seen: usize,
+
+    /// Goods IDs in the Archipelago range that carry no location and aren't
+    /// blank placeholders, so they stay in the inventory. Remembered so the
+    /// sweep doesn't re-read the regulation (or re-log) for the same item on
+    /// every pass, which would be ten times a second.
+    untagged_item_ids: HashSet<u32>,
+
+    /// Whether the local player was dead as of the last tick. Lets us send
+    /// DeathLink once per death instead of every frame the player stays dead.
+    was_dead: bool,
+
+    /// The pending request asking the server which item sits at each of this
+    /// game's locations, and when we sent it.
+    local_item_scout: Option<ScoutPoll>,
+    local_item_scout_requested: Option<Instant>,
+
+    /// Location ID to Archipelago item ID, for every location holding one of
+    /// this player's *own* items. `None` until the server has answered the
+    /// scout. Locations with another player's item aren't listed, so those stay
+    /// placeholders.
+    local_location_items: Option<HashMap<i64, i64>>,
 }
 
 struct LocalVirtualItemGrant {
@@ -69,6 +153,18 @@ impl shared::Core for Core {
             locations_sent: 0,
             sent_goal: false,
             item_get_display_restores: Vec::new(),
+            pending_flag_checks: None,
+            flag_poll_cursor: 0,
+            last_marker_sync: None,
+            last_region_lock_sync: None,
+            last_inventory_scan: None,
+            last_virtual_location_sync: None,
+            locations_seen: 0,
+            untagged_item_ids: HashSet::new(),
+            was_dead: false,
+            local_item_scout: None,
+            local_item_scout_requested: None,
+            local_location_items: None,
         })
     }
 
@@ -80,9 +176,8 @@ impl shared::Core for Core {
         &mut self.base
     }
 
-    /// Updates the game logic and checks for common errors. This does nothing
-    /// if we're not currently connected to the Archipelago server or if the mod
-    /// has encountered a fatal error.
+    /// Updates the game logic and checks for common errors. Does nothing if
+    /// we're not connected to the server or the mod hit a fatal error.
     fn update_live(&mut self) -> Result<()> {
         self.check_seed_conflict()?;
         if let Some(save_data) = SaveData::instance_mut().as_mut()
@@ -91,19 +186,22 @@ impl shared::Core for Core {
             save_data.seed = Some(self.seed().to_string());
         };
 
-        self.check_dlc_error()?;
+        
         self.restore_expired_item_get_displays();
 
-        // Process events that should only happen when the player has a save
-        // loaded and is actively playing.
+        // Handle events that should only happen while the player has a save
+        // loaded and is playing.
         self.take_events();
 
         self.process_incoming_items();
         self.process_inventory_items()?;
-        remove_queued_display_items();
+        if let Some(save_data) = SaveData::instance() {
+            remove_sent_display_items(&save_data.locations);
+        }
         self.sync_region_lock_flags();
         self.sync_priority_location_markers();
         self.handle_goal()?;
+        self.handle_death_link()?;
 
         Ok(())
     }
@@ -207,9 +305,9 @@ impl shared::Core for Core {
 }
 
 impl Core {
-    /// Returns an error if there's a conflict between the notion of the current
-    /// seed in the server, the save, and/or the config. Also updates the save
-    /// data's notion based on whatever is available if it doesn't exist yet.
+    /// Errors if the server, the save and/or the config disagree about the
+    /// current seed. If the save has no seed yet, fills it in from what's
+    /// available.
     fn check_seed_conflict(&mut self) -> Result<()> {
         let client_seed = self.client().map(|c| c.seed_name());
         let save = SaveData::instance();
@@ -248,23 +346,10 @@ impl Core {
         }
     }
 
-    /// Returns an error if [config] expects DLC to be installed.
-    fn check_dlc_error(&self) -> Result<()> {
-        if self
-            .client()
-            .is_some_and(|c| c.slot_data().options.enable_dlc)
-        {
-            bail!(
-                "DLC is enabled for this seed, but this Elden Ring Archipelago client milestone \
-                 only supports base-game seeds."
-            );
-        } else {
-            Ok(())
-        }
-    }
+    
 
-    /// Handle new items, distributing them to the player when appropriate. This
-    /// also initializes the [SaveData] for a new file.
+    /// Hands new items to the player when appropriate. Also sets up the
+    /// [SaveData] for a new file.
     fn process_incoming_items(&mut self) {
         let show_item_popups = self.base().show_item_popups();
         let show_progression_item_popups = self.base().show_progression_item_popups();
@@ -279,8 +364,8 @@ impl Core {
             return;
         };
 
-        // Avoid granting multiple received items in one burst, but keep release
-        // queues moving at a reasonable pace.
+        // Don't grant several received items in one burst, but keep release
+        // queues moving at a decent pace.
         if self.last_item_time.elapsed() < RECEIVED_ITEM_GRANT_INTERVAL {
             return;
         }
@@ -402,16 +487,27 @@ impl Core {
         }
     }
 
-    fn sync_priority_location_markers(&self) {
+    fn sync_priority_location_markers(&mut self) {
+        if !due(&mut self.last_marker_sync, MARKER_SYNC_INTERVAL) {
+            return;
+        }
+
         let Some(client) = self.client() else {
             return;
         };
+        if client.slot_data().priority_marker_flags.is_empty() {
+            return;
+        }
+
+        // Walk the inventory once for the whole pass, not once per item per
+        // requirement per marker.
+        let inventory = InventorySnapshot::capture();
 
         for (location, flag) in &client.slot_data().priority_marker_flags {
             let visible = !client.is_local_location_checked(location.0)
                 && client
                     .slot_data()
-                    .marker_requirement_met(client, location.0);
+                    .marker_requirement_met(client, location.0, &inventory);
             if get_event_flag(*flag) != Some(visible) {
                 set_event_flag(*flag, visible);
             }
@@ -419,6 +515,10 @@ impl Core {
     }
 
     fn sync_region_lock_flags(&mut self) {
+        if !due(&mut self.last_region_lock_sync, REGION_LOCK_SYNC_INTERVAL) {
+            return;
+        }
+
         let Some(client) = self.client() else {
             return;
         };
@@ -434,10 +534,10 @@ impl Core {
             .map(|received| received.item().id())
             .collect::<HashSet<_>>();
 
-        // Region-lock items obtained from local virtual locations (e.g. "Priority
-        // Reserve" / own-world placements) are granted client-side and never enter
-        // `received_items`, so include them explicitly. Without this, a lock item
-        // found at such a location would never unlock its region.
+        // Region-lock items from local virtual locations (like "Priority
+        // Reserve" or own-world placements) are granted by the client and never
+        // show up in `received_items`, so include them here. Otherwise a lock
+        // item found at one would never unlock its region.
         let local_virtual_granted: HashSet<i64> = SaveData::instance()
             .map(|save_data| {
                 save_data
@@ -448,16 +548,26 @@ impl Core {
             })
             .unwrap_or_default();
 
+        let inventory = InventorySnapshot::capture();
+
         for (item_id, flag) in &slot_data.region_lock_item_flags {
             let ap_code = item_id.0;
+
+            // Cheap checks first: the inventory lookup is the expensive part,
+            // and the flag read skips it for locks that are already open.
+            if get_event_flag(*flag) == Some(true) {
+                continue;
+            }
+
             let owned = received_items.contains(&ap_code)
                 || local_virtual_granted.contains(&ap_code)
-                || slot_data.has_er_inventory_item(ap_code);
+                || slot_data.has_er_inventory_item(ap_code, &inventory);
 
-            // Region locks are one-way: only ever SET the flag once the item is owned,
-            // never clear it. Clearing on a transient "not owned" (before the AP client
-            // has synced, or playing offline) would re-lock an already-opened region.
-            if owned && get_event_flag(*flag) != Some(true) {
+            // Region locks are one-way: only ever set the flag once the item is
+            // owned, never clear it. Clearing on a temporary "not owned"
+            // (before the client has synced, or offline) would re-lock a region
+            // that's already open.
+            if owned {
                 set_event_flag(*flag, true);
 
                 if let Some(er_id_key) = slot_data.ap_ids_to_item_ids.get(&I64Key(ap_code)) {
@@ -477,8 +587,87 @@ impl Core {
         }
     }
 
-    /// Removes any placeholder items from the player's inventory and notifies
-    /// the server that they've been accessed.
+    /// Builds and caches the list of locations to poll from the loaded
+    /// regulation. Returns `false` if the regulation isn't available yet (e.g.
+    /// no save loaded).
+    fn ensure_pending_flag_checks(&mut self) -> bool {
+        if self.pending_flag_checks.is_some() {
+            return true;
+        }
+
+        let Some(regulation) = RegulationManager::instance() else {
+            return false;
+        };
+
+        self.pending_flag_checks = Some(
+            checks::build_location_flag_map(&regulation)
+                .into_iter()
+                .map(|(location_id, flags)| (location_id, flags.into_iter().collect()))
+                .collect(),
+        );
+        self.flag_poll_cursor = 0;
+        true
+    }
+
+    /// Marks a location as checked once the game sets any of its event flags.
+    /// This is how item lots and shop purchases are detected: unlike normal
+    /// pickups, they aren't supposed to leave a placeholder in the inventory
+    /// for `process_inventory_items` to find, so the location's own vanilla
+    /// flag is the only signal.
+    ///
+    /// Only [FLAG_POLL_BATCH_SIZE] locations are checked per call, picking up
+    /// where the last call stopped, and a location is dropped once it's known
+    /// to be checked. So the cost per frame is capped and falls as the run goes
+    /// on.
+    fn poll_flag_based_checks(&mut self, save_data: &mut SaveData) {
+        if !self.ensure_pending_flag_checks() {
+            return;
+        }
+        let Some(pending) = self.pending_flag_checks.as_mut() else {
+            return;
+        };
+        if pending.is_empty() {
+            return;
+        }
+
+        // Get the flag manager once for the whole batch, not once per location.
+        let Ok(events) = (unsafe { CSEventFlagMan::instance() }) else {
+            return;
+        };
+
+        let batch = FLAG_POLL_BATCH_SIZE.min(pending.len());
+        for _ in 0..batch {
+            if self.flag_poll_cursor >= pending.len() {
+                self.flag_poll_cursor = 0;
+            }
+
+            let (location_id, flags) = &pending[self.flag_poll_cursor];
+            let location_id = *location_id;
+
+            let already_checked = save_data.locations.contains(&location_id);
+            let checked = already_checked
+                || flags
+                    .iter()
+                    .any(|flag| events.virtual_memory_flag.get_flag(u32::from(*flag)));
+
+            if !checked {
+                self.flag_poll_cursor += 1;
+                continue;
+            }
+
+            if !already_checked {
+                info!("Archipelago location {} checked via event flag", location_id);
+                save_data.locations.insert(location_id);
+            }
+
+            // Retire the location. `swap_remove` moves an unvisited entry into
+            // this slot, so the cursor stays put and picks it up next.
+            pending.swap_remove(self.flag_poll_cursor);
+        }
+    }
+
+    /// Removes placeholder items from the inventory and tells the server their
+    /// locations were reached.
     fn process_inventory_items(&mut self) -> Result<()> {
         let Some(ref mut save_data) = SaveData::instance_mut() else {
             return Ok(());
@@ -493,22 +682,27 @@ impl Core {
             return Ok(());
         };
 
-        // We have to make a separate vector here so we aren't borrowing while
-        // we make mutations.
-        let ids = game_data_man
-            .main_player_game_data
-            .equipment
-            .equip_inventory_data
-            .items_data
-            .items()
-            .map(|e| e.item_id)
-            .collect::<Vec<_>>();
+        // Collect into a separate vector so we aren't borrowing while we make
+        // changes. Filtering during the walk keeps it to a handful of entries
+        // instead of copying the whole inventory every time.
+        let ids = if due(&mut self.last_inventory_scan, INVENTORY_SCAN_INTERVAL) {
+            game_data_man
+                .main_player_game_data
+                .equipment
+                .equip_inventory_data
+                .items_data
+                .items()
+                .map(|e| e.item_id)
+                .filter(|id| id.is_archipelago())
+                .collect::<Vec<_>>()
+        } else {
+            Vec::new()
+        };
         for id in ids {
-            if !id.is_archipelago() {
+            if self.untagged_item_ids.contains(&id.param_id()) {
                 continue;
             }
 
-            info!("Inventory contains Archipelago item {:?}", id);
             let row = regulation_manager
                 .get_equip_param(id)
                 .unwrap_or_else(|| panic!("no row defined for Archipelago ID {:?}", id));
@@ -517,16 +711,54 @@ impl Core {
                 .as_goods()
                 .unwrap_or_else(|| panic!("Archipelago ID {:?} should be Goods", id));
 
-            info!("  Archipelago location: {}", row.archipelago_location_id());
-            save_data.locations.insert(row.archipelago_location_id());
+            let Some(location_id) = row.archipelago_location_id() else {
+                // A placeholder with no location or item data. Local ones are
+                // leftovers, since the real item is granted by location (see
+                // `grant_local_location_items`). Foreign ones just stand in for
+                // another player's item, and their pickup is reported through
+                // the lot's event flag. Neither needs to stay in the inventory.
+                // The `basic_price == 0` check limits this to the randomizer's
+                // blank rows: a row with a price isn't one of them.
+                if row.basic_price() == 0 {
+                    info!(
+                        "Removing untagged {} placeholder {:?}",
+                        if id.is_local_archipelago() {
+                            "local"
+                        } else {
+                            "foreign"
+                        },
+                        id
+                    );
+                    game_data_man.remove_item(id, 1);
+                    continue;
+                }
+
+                // The ID is in the Archipelago range but the row has no
+                // location and carries a price, so it isn't one of the
+                // randomizer's blank placeholders. There's nothing to convert
+                // it to or report. It has to stay in the inventory, because the
+                // code below would delete it.
+                info!(
+                    "Item {:?} is in the Archipelago range but carries no location; \
+                     leaving it in the inventory",
+                    id
+                );
+                self.untagged_item_ids.insert(id.param_id());
+                continue;
+            };
+
+            info!("Inventory contains Archipelago item {:?}", id);
+            info!("  Archipelago location: {}", location_id);
+            save_data.locations.insert(location_id);
 
             if let Some((real_id, quantity)) = row.archipelago_item() {
                 info!("  Converting to {}x {:?}", quantity, real_id);
+                // Handed over here, so the by-location grant must skip it.
+                save_data.local_virtual_items_granted.insert(location_id);
                 game_data_man.give_item_directly(real_id, quantity);
             } else {
-                // Presumably any item without local item data is a foreign
-                // item, but we'll log a bunch of extra data in case there's a
-                // bug we need to track down.
+                // Any item without local item data is presumably a foreign one,
+                // but log extra details in case there's a bug to track down.
                 info!(
                     "  Item has no local item data. Basic price: {}, sell value: {}",
                     row.basic_price(),
@@ -537,13 +769,29 @@ impl Core {
             game_data_man.remove_item(id, 1);
         }
 
-        if let Some(client) = self.client() {
-            client
-                .slot_data()
-                .expand_virtual_location_checks(&mut save_data.locations);
+        self.poll_flag_based_checks(save_data);
+
+        // The virtual-location passes all walk the checked-location set, which
+        // grows into the thousands. Run them when the set actually changed, and
+        // otherwise only on a slow timer as a backstop for state that changed
+        // elsewhere (a late server connection, say).
+        let locations_changed = save_data.locations.len() != self.locations_seen;
+        if locations_changed
+            || due(
+                &mut self.last_virtual_location_sync,
+                VIRTUAL_LOCATION_SYNC_INTERVAL,
+            )
+        {
+            if let Some(client) = self.client() {
+                client
+                    .slot_data()
+                    .expand_virtual_location_checks(&mut save_data.locations);
+            }
+            self.grant_local_virtual_location_items(item_man, save_data);
+            self.grant_local_location_items(item_man, save_data);
+            self.notify_foreign_virtual_location_items(item_man, save_data);
         }
-        self.grant_local_virtual_location_items(item_man, save_data);
-        self.notify_foreign_virtual_location_items(item_man, save_data);
+        self.locations_seen = save_data.locations.len();
 
         if save_data.locations.len() > self.locations_sent
             && let Some(client) = self.client_mut()
@@ -624,10 +872,205 @@ impl Core {
         }
     }
 
+    /// Makes sure the server has told us which item is at each of this game's
+    /// locations, and returns whether that answer is in yet.
+    ///
+    /// The randomizer's local placeholders don't carry the real item, and the
+    /// server doesn't send a player's own items back to them. So the only way
+    /// to know what a local pickup should give is to ask the server (a
+    /// "scout"). We do that once for every location and cache the answer.
+    fn update_local_item_scout(&mut self) -> bool {
+        if self.local_location_items.is_some() {
+            return true;
+        }
+
+        // Pick up the answer, if it's arrived.
+        let response = self.local_item_scout.as_mut().and_then(|poll| poll());
+        match response {
+            Some(Ok(located)) => {
+                let own_items = {
+                    let Some(client) = self.client() else {
+                        return false;
+                    };
+                    let me = client.this_player();
+                    located
+                        .iter()
+                        .filter(|entry| {
+                            entry.receiver().team() == me.team()
+                                && entry.receiver().slot() == me.slot()
+                        })
+                        .map(|entry| (entry.location().id(), entry.item().id()))
+                        .collect::<HashMap<_, _>>()
+                };
+                info!(
+                    "Scouted {} location(s): {} hold this player's own items",
+                    located.len(),
+                    own_items.len()
+                );
+                self.local_item_scout = None;
+                self.local_location_items = Some(own_items);
+                return true;
+            }
+            Some(Err(err)) => {
+                warn!("Scouting locations failed; will retry: {:#}", err);
+                self.local_item_scout = None;
+            }
+            None => {}
+        }
+
+        // Still waiting on a request that's out.
+        if self.local_item_scout.is_some()
+            && self
+                .local_item_scout_requested
+                .is_some_and(|at| at.elapsed() < LOCAL_ITEM_SCOUT_TIMEOUT)
+        {
+            return false;
+        }
+
+        // Ask (or ask again).
+        let Some(client) = self.client_mut() else {
+            return false;
+        };
+        let mut location_ids = client
+            .unchecked_locations()
+            .map(|location| location.id())
+            .collect::<Vec<_>>();
+        location_ids.extend(client.checked_locations().map(|location| location.id()));
+
+        info!("Scouting {} location(s) for their items", location_ids.len());
+        let receiver = client.scout_locations(location_ids, ap::CreateAsHint::No);
+        self.local_item_scout = Some(Box::new(move || receiver.try_recv().ok()));
+        self.local_item_scout_requested = Some(Instant::now());
+        false
+    }
+
+    /// Grants the real item for every checked location of this game that holds
+    /// one of the player's own items. Locations with another player's item are
+    /// left alone and stay placeholders.
+    ///
+    /// Handled locations are tracked in
+    /// `SaveData::local_virtual_items_granted`, which is saved, so each
+    /// location grants at most once. The first time this runs for a save, every
+    /// already-checked location is recorded as handled *without* granting, so
+    /// an old save isn't flooded with items for pickups it made long ago.
+    fn grant_local_location_items(&mut self, item_man: &mut MapItemMan, save_data: &mut SaveData) {
+        if !save_data
+            .local_virtual_items_granted
+            .contains(&LOCAL_LOCATION_BASELINE_MARKER)
+        {
+            let already_checked = {
+                let Some(client) = self.client() else {
+                    return;
+                };
+                let slot_data = client.slot_data();
+                save_data
+                    .locations
+                    .iter()
+                    .copied()
+                    // Virtual locations are granted by their own pass.
+                    .filter(|location_id| slot_data.local_virtual_location_item(*location_id).is_none())
+                    .collect::<Vec<_>>()
+            };
+            info!(
+                "Baselining {} already-checked location(s) for by-location grants",
+                already_checked.len()
+            );
+            for location_id in already_checked {
+                save_data.local_virtual_items_granted.insert(location_id);
+            }
+            save_data
+                .local_virtual_items_granted
+                .insert(LOCAL_LOCATION_BASELINE_MARKER);
+        }
+
+        if !self.update_local_item_scout() {
+            return;
+        }
+
+        let mut unmapped = Vec::new();
+        let pending_grants = {
+            let (Some(client), Some(own_items)) = (self.client(), self.local_location_items.as_ref())
+            else {
+                return;
+            };
+            let slot_data = client.slot_data();
+
+            save_data
+                .locations
+                .iter()
+                .copied()
+                .filter(|location_id| {
+                    !save_data
+                        .local_virtual_items_granted
+                        .contains(location_id)
+                })
+                .filter_map(|location_id| {
+                    let ap_item_id = *own_items.get(&location_id)?;
+                    // Virtual locations are granted by their own pass.
+                    if slot_data.local_virtual_location_item(location_id).is_some() {
+                        return None;
+                    }
+                    let Some(er_id) = slot_data.ap_ids_to_item_ids.get(&I64Key(ap_item_id)) else {
+                        warn!(
+                            "Location {} contains AP item {}, but slot data has no ER item ID",
+                            location_id, ap_item_id
+                        );
+                        unmapped.push(location_id);
+                        return None;
+                    };
+                    let quantity = slot_data
+                        .item_counts
+                        .get(&I64Key(ap_item_id))
+                        .copied()
+                        .unwrap_or(1);
+                    let item_name = client
+                        .this_game()
+                        .item(ap_item_id)
+                        .map(|item| item.name().to_owned())
+                        .unwrap_or_else(|| format!("<item #{}>", ap_item_id));
+                    let location_name = client
+                        .this_game()
+                        .location(location_id)
+                        .map(|location| location.name().to_owned())
+                        .unwrap_or_else(|| format!("<location #{}>", location_id));
+
+                    Some(LocalVirtualItemGrant {
+                        location_id,
+                        location_name,
+                        ap_item_id,
+                        item_name,
+                        er_id: er_id.0,
+                        quantity,
+                    })
+                })
+                .collect::<Vec<_>>()
+        };
+
+        // Nothing can ever be granted for these, so stop warning about them.
+        for location_id in unmapped {
+            save_data.local_virtual_items_granted.insert(location_id);
+        }
+
+        for grant in pending_grants {
+            info!(
+                "Granting own item {}x {} (AP ID {}, ER ID {:?}) for {}",
+                grant.quantity, grant.item_name, grant.ap_item_id, grant.er_id, grant.location_name
+            );
+            // The placeholder is dropped before it's granted (see
+            // `on_grant_items`), so this is the only pop-up the pickup gets,
+            // and it should show.
+            self.grant_received_item(item_man, grant.er_id, grant.quantity, true);
+            save_data
+                .local_virtual_items_granted
+                .insert(grant.location_id);
+            self.last_item_time = Instant::now();
+        }
+    }
+
     /// Shows a pickup pop-up for virtual locations whose item is for another
-    /// player. These have no physical world item, so without this the picker
-    /// gets no feedback for what they sent. Local-destined virtual items are
-    /// handled in [grant_local_virtual_location_items](Self::grant_local_virtual_location_items).
+    /// player. They have no world item, so without this the picker gets no
+    /// feedback for what they sent. Local virtual items are handled in
+    /// [grant_local_virtual_location_items](Self::grant_local_virtual_location_items).
     fn notify_foreign_virtual_location_items(
         &mut self,
         item_man: &mut MapItemMan,
@@ -660,13 +1103,13 @@ impl Core {
                 "Showing foreign virtual location pickup with {:?} from {}",
                 display_item, location_id
             );
-            crate::item::show_virtual_location_display_item(item_man, display_item);
+            crate::item::show_virtual_location_display_item(item_man, display_item, location_id);
             save_data.foreign_virtual_items_notified.insert(location_id);
             self.last_item_time = Instant::now();
         }
     }
 
-    /// Detects when the player has won the game and notifies the server.
+    /// Detects when the player has won and tells the server.
     fn handle_goal(&mut self) -> Result<()> {
         if !self.sent_goal
             && let Some(client) = self.client_mut()
@@ -682,14 +1125,47 @@ impl Core {
 
         Ok(())
     }
+
+    /// Sends a DeathLink when the local player dies, and kills the local player
+    /// when a DeathLink arrives from another slot. Does nothing unless
+    /// DeathLink is enabled in the config.
+    fn handle_death_link(&mut self) -> Result<()> {
+        // TODO(verify): assumes `CoreBase::config()` exists and returns the
+        // `Config<G>` from earlier. Confirm the accessor name on CoreBase.
+        if !self.base().config().death_link_enabled() {
+            return Ok(());
+        }
+
+        // Outgoing: detect the moment of death so we send once per death, not
+        // every frame the player stays dead. `Client::death_link` fills in
+        // sensible defaults (source is the current player's alias, time is now,
+        // adjusted for server skew), so no options are needed.
+        let is_dead = unsafe { crate::game::EldenRing::is_player_dead() };
+        if is_dead && !self.was_dead {
+            if let Some(client) = self.client_mut() {
+                client.death_link(ap::DeathLinkOptions::new())?;
+            }
+        }
+        self.was_dead = is_dead;
+
+        // Incoming: `Event::DeathLink` is what a `Bounced` DeathLink message
+        // becomes (see archipelago_rs client.rs), but every other event is
+        // handled inside `take_events()`/CoreBase in the shared crate, which
+        // this file can't see. Add an `Event::DeathLink => { ... }` arm there
+        // (calling `unsafe { crate::game::EldenRing::kill_player() }`, or a
+        // per-game callback if CoreBase should stay game-agnostic) instead of
+        // duplicating event handling here.
+
+        Ok(())
+    }
 }
-/// A region-lock item and the companion goods it should also grant.
+/// A region-lock item and the companion goods it also grants.
 struct RegionLock {
-    /// Archipelago item name for the lock.
+    /// The Archipelago item name of the lock.
     name: &'static str,
-    /// Elden Ring goods param id for the lock.
+    /// The Elden Ring goods param ID of the lock.
     er_param_id: u32,
-    /// Goods ids granted alongside the lock.
+    /// Goods IDs granted along with the lock.
     companion_goods: &'static [u32],
 }
 
@@ -753,6 +1229,21 @@ fn goods_item_id(goods_id: u32) -> ItemId {
         .and_then(|category| category.checked_add(goods_id))
         .expect("goods item ID overflow");
     ItemId::try_from(encoded).expect("invalid goods item ID")
+}
+
+/// Whether a periodic pass is due; records the time if so.
+///
+/// `last` is `None` until the first run, so every pass runs once on the first
+/// tick and then settles into its interval.
+fn due(last: &mut Option<Instant>, interval: Duration) -> bool {
+    let now = Instant::now();
+    match last {
+        Some(last) if now.duration_since(*last) < interval => false,
+        _ => {
+            *last = Some(now);
+            true
+        }
+    }
 }
 
 fn get_event_flag(flag: EventFlagId) -> Option<bool> {

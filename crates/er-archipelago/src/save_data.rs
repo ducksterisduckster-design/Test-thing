@@ -7,43 +7,42 @@ use eldenring_extra::save;
 use fromsoftware_shared::FromStatic;
 use log::*;
 
-/// The singleton instance of the save data, or None if it hasn't been loaded
-/// from the save file or set explicitly.
+/// The shared save data. It holds defaults until a save is loaded or it's set
+/// directly.
 static INSTANCE: LazyLock<RwLock<SaveData>> = LazyLock::new(|| RwLock::new(Default::default()));
 
-/// The configuration for the binary encoding of the save data.
+/// How the save data is encoded to bytes.
 const CONFIG: bincode::config::Configuration = bincode::config::standard();
 
 /// Data that's saved and loaded along with the player's game save.
 #[derive(Debug, Decode, Encode, Default)]
 pub struct SaveData {
-    /// The number of Archipelago items that have been granted to this player
-    /// from foreign games throughout the course of this run.
+    /// How many Archipelago items from other worlds have been given to the
+    /// player in this run.
     pub items_granted: usize,
 
-    /// The set of Archipelago locations that this player has accessed so far in
-    /// this game. We don't strictly need to track this, but it helps us avoid
-    /// being overly chatty with the server.
+    /// Locations the player has already hit in this game. We don't strictly
+    /// need it, but it keeps us from spamming the server.
     pub locations: HashSet<i64>,
 
-    /// The Archipelago seed this save file was last connected to. This is used
-    /// to verify that the player doesn't accidentally corrupt a save by loading
-    /// into it while connected to the wrong multiworld.
+    /// The seed this save was last connected to. Lets us catch someone loading
+    /// a save while connected to the wrong multiworld.
     pub seed: Option<String>,
 
-    /// Virtual locations whose local item grant has already been applied.
+    /// Locations whose own-item grant has already been given: virtual ones,
+    /// plus real ones for the by-location grant. Also holds `-1` once the save
+    /// has been baselined for that.
     pub local_virtual_items_granted: HashSet<i64>,
 
-    /// Virtual locations whose foreign (sent to another player) display
-    /// notification has already been shown, so we don't show it again.
+    /// Virtual locations whose "sent to someone else" pop-up has already been
+    /// shown, so we don't show it twice.
     pub foreign_virtual_items_notified: HashSet<i64>,
 }
 
 impl SaveData {
-    /// Register hooks for loading and unloading saves. These hooks are never
-    /// unregistered.
+    /// Sets up the hooks for saving and loading. They're never removed.
     ///
-    /// Safety: Follow all ilhook safety guidelines.
+    /// Safety: follow ilhook's safety rules.
     pub unsafe fn hook() {
         unsafe {
             std::mem::forget(save::on_save_load(
@@ -61,10 +60,9 @@ impl SaveData {
                     let bytes = match load_type {
                         SavedData(bytes) => bytes,
                         MainMenu => {
-                            // If the player goes back to the main menu, reset
-                            // the granted items and seed info so that if the
-                            // user starts a new file they get all new items and
-                            // no seed conflict.
+                            // Back on the main menu: reset the granted count
+                            // and seed, so a new file starts fresh with no seed
+                            // conflict.
                             let mut save = INSTANCE.write().unwrap();
                             save.items_granted = 0;
                             save.seed = None;
@@ -82,16 +80,14 @@ impl SaveData {
         }
     }
 
-    /// Returns a read-only reference to the singleton [SaveData], or None if
-    /// the player isn't currently loaded into a game.
+    /// Read-only access to the [SaveData] singleton, or `None` if the player
+    /// isn't in a game.
     pub fn instance<'a>() -> Option<RwLockReadGuard<'a, Self>> {
-        // MapItemMan is only instantiated when the player is loaded into an
-        // actual game, *not* on the main menu. It's a more reliable way to
-        // distinguish than whether a save file has been loaded, because no file
-        // is loaded when the player starts a new game.
+        // MapItemMan only exists once the player is in a game, not on the main
+        // menu. That's a better test than "is a save loaded", since a new game
+        // has no save file yet.
         //
-        // Safety: We don't actually use the man, we just check whether it
-        // exists.
+        // Safety: we never use the man, we only check that it exists.
         if unsafe { MapItemMan::instance() }.is_ok() {
             Some(INSTANCE.read().unwrap())
         } else {
@@ -99,10 +95,10 @@ impl SaveData {
         }
     }
 
-    /// Returns a read-only reference to the singleton [SaveData], or None if
-    /// the player isn't currently loaded into a game.
+    /// Write access to the [SaveData] singleton, or `None` if the player isn't
+    /// in a game.
     pub fn instance_mut<'a>() -> Option<RwLockWriteGuard<'a, Self>> {
-        // See above.
+        // Same as above.
         if unsafe { MapItemMan::instance() }.is_ok() {
             Some(INSTANCE.write().unwrap())
         } else {
