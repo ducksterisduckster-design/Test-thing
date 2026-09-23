@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::{LazyLock, RwLock, RwLockReadGuard, RwLockWriteGuard};
 
 use bincode::{Decode, Encode};
@@ -10,6 +11,9 @@ use log::*;
 /// The shared save data. It holds defaults until a save is loaded or it's set
 /// directly.
 static INSTANCE: LazyLock<RwLock<SaveData>> = LazyLock::new(|| RwLock::new(Default::default()));
+
+/// How many times the player has gone back to the main menu this session.
+static MENU_RETURNS: AtomicU32 = AtomicU32::new(0);
 
 /// How the save data is encoded to bytes.
 const CONFIG: bincode::config::Configuration = bincode::config::standard();
@@ -37,9 +41,54 @@ pub struct SaveData {
     /// Virtual locations whose "sent to someone else" pop-up has already been
     /// shown, so we don't show it twice.
     pub foreign_virtual_items_notified: HashSet<i64>,
+
+    /// Set while an NG+ trap is active, so the original NG+ level can be
+    /// restored on death, even across a quit and reload.
+    pub ng_trap: Option<NgTrap>,
+}
+
+/// An active NG+ trap.
+#[derive(Debug, Clone, Copy, Decode, Encode)]
+pub struct NgTrap {
+    /// The NG+ level to go back to when the player dies.
+    pub original: u32,
+
+    /// The NG+ level the trap put the game on.
+    pub trapped: u32,
+}
+
+/// The save data layout from before `ng_trap` existed. Only used to keep
+/// loading older saves.
+#[derive(Decode)]
+struct SaveDataV1 {
+    items_granted: usize,
+    locations: HashSet<i64>,
+    seed: Option<String>,
+    local_virtual_items_granted: HashSet<i64>,
+    foreign_virtual_items_notified: HashSet<i64>,
+}
+
+impl From<SaveDataV1> for SaveData {
+    fn from(old: SaveDataV1) -> Self {
+        Self {
+            items_granted: old.items_granted,
+            locations: old.locations,
+            seed: old.seed,
+            local_virtual_items_granted: old.local_virtual_items_granted,
+            foreign_virtual_items_notified: old.foreign_virtual_items_notified,
+            ng_trap: None,
+        }
+    }
 }
 
 impl SaveData {
+    /// How many times the player has gone back to the main menu this session.
+    /// It goes up whenever a play session ends, so a change means whatever
+    /// loads next may be a different character.
+    pub fn menu_returns() -> u32 {
+        MENU_RETURNS.load(Ordering::Relaxed)
+    }
+
     /// Sets up the hooks for saving and loading. They're never removed.
     ///
     /// Safety: follow ilhook's safety rules.
@@ -66,12 +115,21 @@ impl SaveData {
                             let mut save = INSTANCE.write().unwrap();
                             save.items_granted = 0;
                             save.seed = None;
+                            save.ng_trap = None;
+                            MENU_RETURNS.fetch_add(1, Ordering::Relaxed);
                             return;
                         }
                         _ => return,
                     };
 
-                    match decode_exact::<SaveData>(&bytes) {
+                    // Fall back to the older layout so saves made before the NG+
+                    // trap existed still load.
+                    let decoded = decode_exact::<SaveData>(&bytes).or_else(|err| {
+                        decode_exact::<SaveDataV1>(&bytes)
+                            .map(SaveData::from)
+                            .map_err(|_| err)
+                    });
+                    match decoded {
                         Ok(data) => *INSTANCE.write().unwrap() = data,
                         Err(err) => warn!("Failed to load save data: {}", err),
                     }
