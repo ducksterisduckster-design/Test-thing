@@ -379,10 +379,20 @@ pub trait Core: Send + Sized {
         let events = mem::take(&mut self.base_mut().event_buffer);
 
         if self.base().config().death_link_enabled() {
+            // The server bounces our own DeathLinks back to us, so we have to
+            // recognize and skip them or we'd be killed by our own death.
+            let own_alias = self
+                .client()
+                .map(|client| client.this_player().alias().to_string());
+
             for event in &events {
                 let ap::Event::DeathLink { source, cause, .. } = event else {
                     continue;
                 };
+
+                if Some(source) == own_alias.as_ref() {
+                    continue;
+                }
 
                 let reason = cause.clone().unwrap_or_else(|| format!("{source} died."));
                 self.log(vec![
@@ -415,6 +425,11 @@ pub trait Core: Send + Sized {
 
         if is_main_menu {
             self.base_mut().load_time = None;
+            // Nobody's playing, so a DeathLink that arrives now is stale by the
+            // time a save loads. Don't let it kill the player on load.
+            self.base_mut()
+                .event_buffer
+                .retain(|event| !matches!(event, ap::Event::DeathLink { .. }));
         } else if self.base().load_time.is_none() {
             self.base_mut().load_time = Some(Instant::now());
         }

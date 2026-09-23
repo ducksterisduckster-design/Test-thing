@@ -1,13 +1,23 @@
-use std::time::Duration;
+use std::sync::Mutex;
+use std::time::{Duration, Instant};
 
 use anyhow::Result;
 use eldenring::{
-    cs::{CSFeManHudState, CSFeManImp, CSTaskGroupIndex, CSTaskImp, MapItemMan, PlayerIns},
+    cs::{
+        CSFeManHudState, CSFeManImp, CSTaskGroupIndex, CSTaskImp, GameDataMan, MapItemMan, PlayerIns,
+    },
     fd4::FD4TaskData,
 };
 use fromsoftware_shared::{FromStatic, SharedTaskImpExt};
 
 pub struct EldenRing;
+
+/// How long after a DeathLink kills the player that their death still counts
+/// as caused by that DeathLink.
+const DEATH_LINK_KILL_WINDOW: Duration = Duration::from_secs(10);
+
+/// When the last DeathLink killed the player, if it hasn't been claimed yet.
+static DEATH_LINK_KILL_AT: Mutex<Option<Instant>> = Mutex::new(None);
 
 impl shared::Game for EldenRing {
     type Core = crate::core::Core;
@@ -46,13 +56,21 @@ impl shared::Game for EldenRing {
 
     unsafe fn kill_player() {
         if let Ok(player) = unsafe { PlayerIns::local_player_mut() } {
+            // Someone who's already dead can't be killed again, and their death
+            // wasn't caused by this DeathLink.
+            if player.chr_ins.chr_flags1c5.death_flag() {
+                return;
+            }
+
             player.chr_ins.modules.data.hp = 0;
+            *DEATH_LINK_KILL_AT.lock().unwrap() = Some(Instant::now());
         }
     }
 }
 
 impl EldenRing {
-    /// Whether the local player is dead. Returns `false` if there's no player
+    /// Whether the local player is dead, either because the game flagged them
+    /// dead or because their HP hit zero. Returns `false` if there's no player
     /// loaded (like on the main menu).
     ///
     /// ## Safety
@@ -60,8 +78,75 @@ impl EldenRing {
     /// Call this on the main thread, with no other references to the game's
     /// internal state alive.
     pub unsafe fn is_player_dead() -> bool {
-        unsafe { PlayerIns::local_player() }
-            .is_ok_and(|player| player.chr_ins.chr_flags1c5.death_flag())
+        unsafe { PlayerIns::local_player() }.is_ok_and(|player| {
+            let data = &player.chr_ins.modules.data;
+            player.chr_ins.chr_flags1c5.death_flag() || (data.max_hp > 0 && data.hp <= 0)
+        })
+    }
+
+    /// Returns whether the player's latest death was caused by a received
+    /// DeathLink, and forgets that so it's only reported once. Those deaths
+    /// mustn't be sent back out as new DeathLinks.
+    pub fn take_death_link_kill() -> bool {
+        DEATH_LINK_KILL_AT
+            .lock()
+            .unwrap()
+            .take()
+            .is_some_and(|at| at.elapsed() < DEATH_LINK_KILL_WINDOW)
+    }
+
+    /// A description of the game's own death bookkeeping, for debugging.
+    ///
+    /// ## Safety
+    ///
+    /// Call this on the main thread, with no other references to the game's
+    /// internal state alive.
+    pub unsafe fn death_debug() -> String {
+        match unsafe { GameDataMan::instance() } {
+            Ok(data) => format!("state {:?}, just died {}", data.death_state, data.just_died),
+            Err(_) => "no game data".to_string(),
+        }
+    }
+
+    /// How many times the player has died on this character. Returns `None`
+    /// if the game data isn't loaded yet.
+    ///
+    /// ## Safety
+    ///
+    /// Call this on the main thread, with no other references to the game's
+    /// internal state alive.
+    pub unsafe fn death_count() -> Option<u32> {
+        unsafe { GameDataMan::instance() }
+            .ok()
+            .map(|data| data.death_count)
+    }
+
+    /// The current NG+ cycle: 0 is NG, 1 is NG+, and so on up to 7. Returns
+    /// `None` if the game data isn't loaded yet.
+    ///
+    /// ## Safety
+    ///
+    /// Call this on the main thread, with no other references to the game's
+    /// internal state alive.
+    pub unsafe fn ng_level() -> Option<u32> {
+        unsafe { GameDataMan::instance() }.ok().map(|data| data.ng_lvl)
+    }
+
+    /// Sets the current NG+ cycle. Enemies pick up the new scaling as they
+    /// (re)spawn. Returns `false` if the game data isn't loaded yet.
+    ///
+    /// ## Safety
+    ///
+    /// Call this on the main thread, with no other references to the game's
+    /// internal state alive.
+    pub unsafe fn set_ng_level(level: u32) -> bool {
+        match unsafe { GameDataMan::instance_mut() } {
+            Ok(data) => {
+                data.ng_lvl = level;
+                true
+            }
+            Err(_) => false,
+        }
     }
 }
 
