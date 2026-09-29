@@ -15,7 +15,7 @@ use log::*;
 use regex_macro::regex;
 
 use crate::checks;
-use crate::item::{EquipParamExt, ItemIdExt, RegulationManager, remove_sent_display_items};
+use crate::item::{ItemIdExt, RegulationManager, passive_row, remove_sent_display_items};
 use crate::save_data::*;
 use crate::slot_data::{EventFlagId, I64Key, InventorySnapshot, SlotData};
 use shared::{Core as SharedCore, CoreBase};
@@ -490,6 +490,29 @@ impl Core {
                 .get(&id_key)
                 .copied()
                 .unwrap_or(1);
+
+            // With DLC start enabled, the randomizer's regulation edit already
+            // puts a few items (Spirit Calling Bell and the like) straight into
+            // the new character's starting inventory, on top of sending them
+            // here as ordinary AP start-inventory items (location `Server`).
+            // Granting this copy too would double them up, so skip it once the
+            // player already has it. A non-DLC-start game never bakes these in,
+            // so `has_item_in_inventory` stays false there and this is a no-op.
+            if source_location == ap::Location::server()
+                && client.slot_data().options.enable_dlc
+                && has_item_in_inventory(er_id)
+            {
+                info!(
+                    "Skipping start-inventory item {} (ER ID {:?}); the randomizer's \
+                     DLC-start regulation edit already granted it",
+                    item.item().name(),
+                    er_id
+                );
+                save_data.items_granted += 1;
+                self.last_item_time = Instant::now();
+                return;
+            }
+
             let source_display_name = received_item_location_display_name(
                 client,
                 item,
@@ -792,7 +815,7 @@ impl Core {
                     {
                         for goods_id in companions {
                             let companion_id = goods_item_id(*goods_id);
-                            if !has_goods_in_inventory(companion_id) {
+                            if !has_item_in_inventory(companion_id) {
                                 item_man.grant_item(ItemBufferEntry::new(companion_id, 1));
                             }
                         }
@@ -918,13 +941,22 @@ impl Core {
                 continue;
             }
 
+            if !matches!(id.category(), ItemCategory::Goods | ItemCategory::Accessory) {
+                // Weapons, protectors, and gems in the Archipelago range are
+                // already real, fully-working items with no hidden location
+                // data to decode (only goods and accessory rows have the
+                // repurposed "vagrant" fields for that); their pickup is
+                // tracked separately, via the lot's event flag. Leave them
+                // in the inventory untouched.
+                continue;
+            }
+
             let row = regulation_manager
                 .get_equip_param(id)
                 .unwrap_or_else(|| panic!("no row defined for Archipelago ID {:?}", id));
-            let row = row
-                .as_dyn()
-                .as_goods()
-                .unwrap_or_else(|| panic!("Archipelago ID {:?} should be Goods", id));
+            let row = passive_row(row.as_dyn()).unwrap_or_else(|| {
+                panic!("Archipelago ID {:?} should be Goods or Accessory", id)
+            });
 
             let Some(location_id) = row.archipelago_location_id() else {
                 // A placeholder with no location or item data. Local ones are
@@ -1426,7 +1458,7 @@ fn companion_goods_for_er_lock_id(er_item_id: u32) -> &'static [u32] {
         .map_or(&[], |lock| lock.companion_goods)
 }
 
-fn has_goods_in_inventory(item_id: ItemId) -> bool {
+fn has_item_in_inventory(item_id: ItemId) -> bool {
     let Ok(game_data_man) = (unsafe { GameDataMan::instance() }) else {
         return false;
     };

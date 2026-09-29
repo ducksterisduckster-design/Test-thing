@@ -5,7 +5,10 @@ use eldenring::cs::{
     GameDataMan, ItemBuffer, ItemBufferEntry, ItemCategory, ItemId, MAP_ITEM_MAN_GRANT_ITEM_VA,
     MapItemMan, SoloParamRepository,
 };
-use eldenring::param::{EquipParamPassive, EquipParamStruct, EquipParamStructMut};
+use eldenring::param::{
+    EQUIP_PARAM_ACCESSORY_ST, EQUIP_PARAM_GOODS_ST, EquipParam, EquipParamPassive,
+    EquipParamStruct, EquipParamStructMut,
+};
 use fromsoftware_shared::FromStatic;
 use ilhook::x64::*;
 use log::*;
@@ -88,10 +91,6 @@ unsafe fn find_pattern(pattern: &[Option<u8>]) -> Option<usize> {
 /// index the native drop function expects: key items by their position in
 /// `key_entries`, normal items continuing after `key_items_capacity`.
 ///
-/// TODO(verify): check these field names (`key_entries`, `normal_entries`,
-/// `key_items_capacity`) against the `eldenring` crate. They're based on the
-/// `EquipInventoryDataListEntry`/`InventoryItemsData` shapes, not the actual
-/// source.
 fn combined_inventory_index(
     items_data: &eldenring::cs::InventoryItemsData,
     item_id: ItemId,
@@ -131,23 +130,33 @@ unsafe fn drop_item(inventory_index: i32, item_id: ItemId, quantity: i32) {
     unsafe { (*DROP_ITEM_FN)(&gaitem, quantity, false) }
 }
 
-
+/// TODO: test if it really works
 use crate::save_data::SaveData;
 
-/// Where the static randomizer starts allocating Archipelago placeholder goods
-/// IDs. Foreign ("Other <player>'s ...") placeholders start here and local ones
-/// at `8_100_000`. Vanilla goods top out at 2_220_010, so anything from here up
-/// is synthetic.
-const ARCHIPELAGO_GOODS_ID_START: u32 = 8_000_000;
+/// Where the static randomizer starts allocating Archipelago placeholder IDs
+/// in every item table except weapons: goods, protectors, accessories, and
+/// gems each get this same range in their own table. Foreign ("Other
+/// <player>'s ...") placeholders start here and local ones at
+/// [ARCHIPELAGO_LOCAL_ID_START]. 
+const ARCHIPELAGO_ID_START: u32 = 8_000_000;
 
-/// Where local placeholders start (items that belong to this game). Everything
-/// between [ARCHIPELAGO_GOODS_ID_START] and this is a foreign placeholder,
+/// Where local placeholders start (items that belong to this game), for every
+/// non-weapon item table. Everything between [ARCHIPELAGO_ID_START] and this
+/// is a foreign placeholder, which stays fake.
+const ARCHIPELAGO_LOCAL_ID_START: u32 = 8_100_000;
+
+/// Where the static randomizer starts allocating Archipelago placeholder IDs
+/// for weapons. Weapons get their own, much higher range in their own table.
+const ARCHIPELAGO_WEAPON_ID_START: u32 = 80_000_000;
+
+/// Where local weapon placeholders start. Everything between
+/// [ARCHIPELAGO_WEAPON_ID_START] and this is a foreign weapon placeholder,
 /// which stays fake.
-const ARCHIPELAGO_LOCAL_GOODS_ID_START: u32 = 8_100_000;
+const ARCHIPELAGO_LOCAL_WEAPON_ID_START: u32 = 81_000_000;
 
 /// Location IDs of zero or less mean the row has no Archipelago location.
-/// Untagged rows keep the vanilla `-1` in the vagrant fields (which decodes to
-/// `-1`), and the `999999999` template row has `0`. Real location IDs start in
+/// Untagged rows keep the vanilla `-1` in the vagrant fields
+/// and the `999999999` template row has `0`. Real location IDs start in
 /// the millions, so neither can be mistaken for one.
 const MIN_VALID_LOCATION_ID: i64 = 1;
 const ARCHIPELAGO_PROGRESSION_ICON_ID: u16 = 15363;
@@ -213,10 +222,22 @@ fn on_grant_items(items: &mut ItemBuffer) {
         let item = items[index];
         info!("Received {}x {:?}", item.quantity, item.id);
 
-        if item.id.category() != ItemCategory::Goods
-            || item.id.param_id() < ARCHIPELAGO_GOODS_ID_START
-        {
+        if !item.id.is_archipelago() {
             // A vanilla item.
+            index += 1;
+            continue;
+        }
+
+        if !matches!(item.id.category(), ItemCategory::Goods | ItemCategory::Accessory) {
+            // Weapons, protectors, and gems in the Archipelago range are
+            // already real, fully-working items: the randomizer just copies
+            // them to a fresh ID in their own table so a local item and a
+            // foreign one don't collide. Neither table has the unused
+            // "vagrant" fields goods and accessories repurpose to hide a
+            // location ID, so there's nothing here to decode. Grant it
+            // untouched; its pickup is still tracked, via the lot's own
+            // event flag.
+            info!("  Non-goods/accessory Archipelago item; granting as-is");
             index += 1;
             continue;
         }
@@ -228,15 +249,14 @@ fn on_grant_items(items: &mut ItemBuffer) {
             let row = regulation_manager
                 .get_equip_param(item.id)
                 .unwrap_or_else(|| panic!("Expected row to exist for {:?}", item.id.param_id()));
-            let row = row
-                .as_dyn()
-                .as_goods()
-                .unwrap_or_else(|| panic!("Archipelago ID {:?} should be Goods", item.id));
+            let row = passive_row(row.as_dyn()).unwrap_or_else(|| {
+                panic!("Archipelago ID {:?} should be Goods or Accessory", item.id)
+            });
             let decoded = row.archipelago_location_id().map(|location_id| {
                 (
                     location_id,
                     row.archipelago_item(),
-                    foreign_display_item_id(row.appearance_replace_item_id()),
+                    row.foreign_display_item(),
                     row.basic_price(),
                     row.sell_value(),
                 )
@@ -340,6 +360,69 @@ fn foreign_display_item_id(appearance_replace_item_id: i32) -> Option<ItemId> {
     (!id.is_archipelago()).then_some(id)
 }
 
+/// A row that can carry a hidden Archipelago location and the real item to
+/// swap it for: goods or accessories, the only two equip param tables with
+/// the unused "vagrant" fields the randomizer repurposes for this (see
+/// [EquipParamExt]). Weapons, protectors, and gems don't have them.
+pub(crate) enum PassiveRow<'a> {
+    Goods(&'a EQUIP_PARAM_GOODS_ST),
+    Accessory(&'a EQUIP_PARAM_ACCESSORY_ST),
+}
+
+impl PassiveRow<'_> {
+    pub(crate) fn archipelago_location_id(&self) -> Option<i64> {
+        match self {
+            Self::Goods(row) => row.archipelago_location_id(),
+            Self::Accessory(row) => row.archipelago_location_id(),
+        }
+    }
+
+    pub(crate) fn archipelago_item(&self) -> Option<(ItemId, u32)> {
+        match self {
+            Self::Goods(row) => row.archipelago_item(),
+            Self::Accessory(row) => row.archipelago_item(),
+        }
+    }
+
+    pub(crate) fn basic_price(&self) -> i32 {
+        match self {
+            Self::Goods(row) => row.basic_price(),
+            Self::Accessory(row) => row.basic_price(),
+        }
+    }
+
+    pub(crate) fn sell_value(&self) -> i32 {
+        match self {
+            Self::Goods(row) => row.sell_value(),
+            Self::Accessory(row) => row.sell_value(),
+        }
+    }
+
+    /// The foreign pickup's display item ("rainbow stone"), if any. Only
+    /// goods rows have `appearance_replace_item_id`; accessories never show a
+    /// stand-in, so a foreign accessory placeholder with no local item data
+    /// is removed silently instead of getting a pop-up.
+    pub(crate) fn foreign_display_item(&self) -> Option<ItemId> {
+        match self {
+            Self::Goods(row) => foreign_display_item_id(row.appearance_replace_item_id()),
+            Self::Accessory(_) => None,
+        }
+    }
+}
+
+/// Narrows a dynamically-typed equip param row to [PassiveRow], if it's one
+/// of the two tables that can carry Archipelago data. `None` for weapons,
+/// protectors, and gems.
+pub(crate) fn passive_row(row: &dyn EquipParam) -> Option<PassiveRow<'_>> {
+    if let Some(goods) = row.as_goods() {
+        Some(PassiveRow::Goods(goods))
+    } else if let Some(accessory) = row.as_accessory() {
+        Some(PassiveRow::Accessory(accessory))
+    } else {
+        None
+    }
+}
+
 fn should_show_item_get_dialog(id: ItemId) -> bool {
     let Some(regulation_manager) = RegulationManager::instance() else {
         return false;
@@ -437,9 +520,7 @@ pub(crate) fn show_virtual_location_display_item(
 /// server included it.
 ///
 /// Anything not sent yet (player offline, or this tick's send hasn't happened)
-/// stays queued and is retried next call. That keeps the stand-in visible until
-/// the server really has the check, instead of vanishing on a timer whether or
-/// not it was sent.
+/// stays queued and is retried next call.
 pub fn remove_sent_display_items(sent_locations: &HashSet<i64>) {
     let (ready, still_pending): (Vec<_>, Vec<_>) = {
         let mut queue = DISPLAY_ITEMS_TO_REMOVE.lock().unwrap();
@@ -501,12 +582,20 @@ pub trait ItemIdExt {
 
 impl ItemIdExt for ItemId {
     fn is_archipelago(&self) -> bool {
-        self.category() == ItemCategory::Goods && self.param_id() >= ARCHIPELAGO_GOODS_ID_START
+        match self.category() {
+            // Weapons get their own, much higher range in their own table.
+            ItemCategory::Weapon => self.param_id() >= ARCHIPELAGO_WEAPON_ID_START,
+            // Everything else (goods, protectors, accessories, gems) shares
+            // the same range, each in its own table.
+            _ => self.param_id() >= ARCHIPELAGO_ID_START,
+        }
     }
 
     fn is_local_archipelago(&self) -> bool {
-        self.category() == ItemCategory::Goods
-            && self.param_id() >= ARCHIPELAGO_LOCAL_GOODS_ID_START
+        match self.category() {
+            ItemCategory::Weapon => self.param_id() >= ARCHIPELAGO_LOCAL_WEAPON_ID_START,
+            _ => self.param_id() >= ARCHIPELAGO_LOCAL_ID_START,
+        }
     }
 }
 
@@ -553,13 +642,10 @@ impl<T: ?Sized + EquipParamPassive> EquipParamExt for T {
 ///
 /// Both fields are signed in the bindings, but what's stored is the raw bit
 /// pattern, so each half is reinterpreted as unsigned before widening.
-/// Otherwise a half with its top bit set would be sign-extended into the result
-/// (same fix as in checks.rs's `decode_archipelago_row`).
+/// Otherwise a half with its top bit set would be sign-extended into the result.
 ///
 /// An untagged row keeps the vanilla `-1` in both fields, which decodes to
-/// `-1`, and the `999999999` template row has `0`. Neither is a real location,
-/// so the randomizer never wrote location data here and the row must be left
-/// alone (see [MIN_VALID_LOCATION_ID]).
+/// `-1`, and the `999999999` template row has `0`. 
 fn decode_location_id(
     vagrant_item_lot_id: i32,
     vagrant_bonus_ene_drop_item_lot_id: i32,

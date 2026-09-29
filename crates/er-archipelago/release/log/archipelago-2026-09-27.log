@@ -1,0 +1,20 @@
+14:10:30 [INFO] Logger initialized.
+14:10:30 [INFO] Worker thread initialized.
+14:10:30 [INFO] Game system initialized.
+14:10:41 [INFO] [APC] Connection refused. Make sure the server session is running and the URL is up-to-date.
+14:12:02 [INFO] Logger initialized.
+14:12:02 [INFO] Worker thread initialized.
+14:12:02 [INFO] Game system initialized.
+14:12:05 [ERROR] Failed to deserialize cached data package for Neon White: expected value at line 1 column 1
+14:12:05 [ERROR] Missing or unreadable cache for Hollow Knight: Silksong: Het systeem kan het opgegeven bestand niet vinden. (os error 2)
+14:12:08 [INFO] [APC] Disconnected: Archipelago server violated the expected protocol: location 7005021 is missing EldenRing's data package
+14:14:21 [INFO] Logger initialized.
+14:14:21 [INFO] Worker thread initialized.
+14:14:21 [INFO] Game system initialized.
+14:14:25 [INFO] [APC] Disconnected: Archipelago server violated the expected protocol: location 7005021 is missing EldenRing's data package
+14:14:30 [INFO] [APC] Reconnecting...
+14:14:33 [INFO] [APC] Disconnected: Archipelago server violated the expected protocol: location 7005021 is missing EldenRing's data package
+14:16:16 [INFO] Logger initialized.
+14:16:16 [INFO] Worker thread initialized.
+14:16:16 [INFO] Game system initialized.
+14:16:22 [INFO] [APC] Disconnected: Archipelago server violated the expected protocol: location 7005021 is missing EldenRing's data package
