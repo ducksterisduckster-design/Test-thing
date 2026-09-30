@@ -1,13 +1,13 @@
 use std::os::windows::ffi::OsStringExt;
 use std::path::{Path, PathBuf};
-use std::{cmp, ffi::OsString, io, mem, mem::MaybeUninit, sync::LazyLock};
+use std::{ffi::OsString, io, sync::LazyLock};
 
-use anyhow::{Context, Error, Result};
+use anyhow::{Error, Result};
 use imgui::*;
 use mint::Vector2;
 use windows::Win32::Foundation::{ERROR_INSUFFICIENT_BUFFER, HMODULE, MAX_PATH};
-use windows::Win32::System::ProcessStatus::{ENUM_PROCESS_MODULES_EX_FLAGS, EnumProcessModulesEx};
-use windows::Win32::System::{LibraryLoader::GetModuleFileNameW, Threading::GetCurrentProcess};
+use windows::Win32::System::LibraryLoader::{GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, GetModuleHandleExW, GetModuleFileNameW};
+use windows::core::PCWSTR;
 use windows_result::Error as WindowsError;
 
 /// Returns the path to the parent directory of the mod.
@@ -28,86 +28,26 @@ pub fn mod_directory<'a>() -> Result<&'a Path> {
 }
 
 /// Loads [mod_directory] without caching.
+///
+/// This previously looked for the location of me3_mod_host.dll, but it is
+/// simpler to find the dll's own location and permits using the mod without
+/// shipping me3 in a particular directory structure. The prior code could
+/// still be used if me3-specific functionality requires it.
 fn load_mod_directory() -> Result<PathBuf> {
     println!("Locating mod directory...");
-    match try_load_mod_directory(0x100) {
-        Ok(TryLoadModDirectoryResult::Path(path)) => Ok(path),
-        Ok(TryLoadModDirectoryResult::TryAgain(size)) => match try_load_mod_directory(size) {
-            Ok(TryLoadModDirectoryResult::Path(path)) => Ok(path),
-            Ok(TryLoadModDirectoryResult::TryAgain(next_size)) => Err(Error::msg(format!(
-                "got multiple resize requests, {:x} and {:x}",
-                size, next_size
-            ))),
-            Err(err) => Err(err),
-        },
-        Err(err) => Err(err),
-    }
-    .context("failed to locate mod directory")
-}
-
-/// Passes an array of the given [size] to [EnumProcessModules] to attempt to
-/// find the mod location.
-///
-/// Returns `None` if the mod location wasn't found *and* more
-fn try_load_mod_directory(size: u32) -> Result<TryLoadModDirectoryResult> {
-    let mut modules = vec![MaybeUninit::<HMODULE>::uninit(); size as usize];
-    let module_size = mem::size_of::<HMODULE>() as u32;
-    let mut bytes_needed: u32 = 0;
-    unsafe {
-        EnumProcessModulesEx(
-            GetCurrentProcess(),
-            modules.as_mut_ptr().cast(),
-            module_size * size,
-            &raw mut bytes_needed,
-            // Only list 64-bit modules, since we know me3 is 64-bit.
-            ENUM_PROCESS_MODULES_EX_FLAGS(2),
+    let module_handle = unsafe {
+        fn in_module_dummy() {}
+        let mut module_handle = HMODULE::default();
+        GetModuleHandleExW(
+            GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT | GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
+            PCWSTR(in_module_dummy as *const u16),
+            &mut module_handle,
         )?;
-    }
-
-    let modules_needed = bytes_needed / module_size;
-    println!("  Found {} loaded DLLs", modules_needed);
-
-    let modules = &modules[..cmp::min(modules_needed, size) as usize];
-    for module in modules {
-        let mut path = get_module_path(unsafe { module.assume_init() })?;
-        if path.file_name().and_then(|op| op.to_str()) == Some("me3_mod_host.dll") {
-            println!("  Found ME3 DLL: {:?}", path);
-            if let Some(parent) = path.parent()
-                && parent.ends_with("bin/win64")
-            {
-                // The Linux ME3 distribution has me3_mod_host.dll in a deeper
-                // directory than the Windows distribution, so pop one extra
-                // layer off.
-                path.pop();
-            }
-            path.pop();
-            path.pop();
-            println!("  Mod path: {:?}", path);
-            return Ok(TryLoadModDirectoryResult::Path(path));
-        }
-    }
-
-    if modules_needed > size {
-        println!("  There are more DLLs to check, retrying");
-        Ok(TryLoadModDirectoryResult::TryAgain(modules_needed))
-    } else {
-        println!(
-            "  All loaded DLLs: {:?}",
-            modules
-                .iter()
-                .map(|m| get_module_path(unsafe { m.assume_init() }))
-        );
-        Err(Error::msg("me3_mod_host.dll isn't loaded in this process"))
-    }
-}
-
-/// The value returned by [try_load_mod_directory]
-enum TryLoadModDirectoryResult {
-    /// The path to the mod directory.
-    Path(PathBuf),
-
-    /// The number of [HMODULE]s necessary to load all DLLs in this process.
-    TryAgain(u32),
+        module_handle
+    };
+    let mut dll_path = get_module_path(module_handle)?;
+    dll_path.pop();
+    Ok(dll_path)
 }
 
 /// Returns the full path to [module].
