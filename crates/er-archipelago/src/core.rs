@@ -865,7 +865,7 @@ impl Core {
             return;
         }
         let Some(mapping) = &self.location_flag_mapping else {
-            return
+            return;
         };
 
         // Get the flag manager once for the whole batch, not once per location.
@@ -874,10 +874,10 @@ impl Core {
         };
 
         let mut checked_locations: HashSet<i64> = HashSet::new();
-
-        for flag in LocationFlagChanges::take_changed_flags() {
-            let Some(location_ids) = mapping.flag_locations.get(&flag) else {
-                continue
+        let changed_flags = LocationFlagChanges::take_changed_flags();
+        for flag in changed_flags.iter().as_ref() {
+            let Some(location_ids) = mapping.flag_locations.get(flag) else {
+                continue;
             };
             for &location_id in location_ids {
                 if self.check_location_flags(events, save_data, location_id) {
@@ -886,7 +886,7 @@ impl Core {
             }
         }
 
-        let batch = (self.pending_flag_checks.len() - checked_locations.len()).clamp(0, FLAG_POLL_BATCH_SIZE);
+        let batch = (self.pending_flag_checks.len() - changed_flags.len()).clamp(0, FLAG_POLL_BATCH_SIZE);
         for _ in 0..batch {
             if self.flag_poll_cursor >= self.pending_flag_checks.len() {
                 self.flag_poll_cursor = 0;
@@ -905,10 +905,10 @@ impl Core {
 
     fn check_location_flags(&self, events: &CSEventFlagMan, save_data: &mut SaveData, location_id: i64) -> bool {
         let Some(mapping) = &self.location_flag_mapping else {
-            return false
+            return false;
         };
         let Some(flags) = mapping.location_flags.get(&location_id) else {
-            return false
+            return false;
         };
 
         let already_checked = save_data.locations.contains(&location_id);
