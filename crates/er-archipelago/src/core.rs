@@ -15,6 +15,7 @@ use log::*;
 use regex_macro::regex;
 
 use crate::checks;
+use crate::checks::{LocationFlagChanges, LocationFlagMapping};
 use crate::item::{ItemIdExt, RegulationManager, passive_row, remove_sent_display_items};
 use crate::save_data::*;
 use crate::slot_data::{EventFlagId, I64Key, InventorySnapshot, SlotData};
@@ -25,12 +26,11 @@ const ITEM_GET_DISPLAY_SUPPRESSION_DURATION: Duration = Duration::from_millis(75
 
 /// How many locations `poll_flag_based_checks` looks at per frame.
 ///
-/// There are about five thousand flag-backed locations and reading a flag isn't
-/// free, so checking them all every frame would cost frame time for nothing: a
-/// check the player just triggered is just as good a few frames later. At this
-/// batch size the whole table gets swept about three times a second at 60fps,
-/// and it shrinks as locations are found.
-const FLAG_POLL_BATCH_SIZE: usize = 256;
+/// There are ~5000 flag-backed locations and reading a flag isn't free
+/// (but is currently unnecessarily very inefficient). At this batch size
+/// the whole table gets swept in ~1.3s at 60fps, which is acceptable for
+/// anything missed by the flag hooks.
+const FLAG_POLL_BATCH_SIZE: usize = 64;
 
 /// How often the priority location markers are recomputed. Each pass walks
 /// every marker's requirement tree, so it runs on a timer instead of every
@@ -129,12 +129,16 @@ pub struct Core {
     /// grants and need to be restored later.
     item_get_display_restores: Vec<ItemGetDisplayRestore>,
 
-    /// Locations still waiting to be seen as checked, each with the flags that
-    /// would satisfy it. Used for flag-based check detection (item lots and
-    /// shop purchases that never touch the inventory). Built the first time the
-    /// regulation is available, since it doesn't change for the rest of the
-    /// session, and drained as locations are found.
-    pending_flag_checks: Option<Vec<(i64, Vec<EventFlagId>)>>,
+    /// Two-way mapping between Archipelago locations and event flags, used for
+    /// flag-based check detection (item lots and shop purchases that never
+    /// touch the inventory). Built the first time the regulation is available.
+    /// It doesn't change for the rest of the session.
+    location_flag_mapping: Option<LocationFlagMapping>,
+
+    /// Locations still waiting to be seen as checked for poll-based location
+    /// checking, populated when `location_flag_mapping` is set. It is drained
+    /// as locations are found.
+    pending_flag_checks: Vec<i64>,
 
     /// How far through `pending_flag_checks` the current sweep has got.
     flag_poll_cursor: usize,
@@ -207,7 +211,8 @@ impl shared::Core for Core {
             locations_sent: 0,
             sent_goal: false,
             item_get_display_restores: Vec::new(),
-            pending_flag_checks: None,
+            location_flag_mapping: None,
+            pending_flag_checks: Vec::new(),
             flag_poll_cursor: 0,
             last_marker_sync: None,
             last_region_lock_sync: None,
@@ -828,8 +833,8 @@ impl Core {
     /// Builds and caches the list of locations to poll from the loaded
     /// regulation. Returns `false` if the regulation isn't available yet (e.g.
     /// no save loaded).
-    fn ensure_pending_flag_checks(&mut self) -> bool {
-        if self.pending_flag_checks.is_some() {
+    fn ensure_location_flag_mapping(&mut self) -> bool {
+        if self.location_flag_mapping.is_some() {
             return true;
         }
 
@@ -837,12 +842,10 @@ impl Core {
             return false;
         };
 
-        self.pending_flag_checks = Some(
-            checks::build_location_flag_map(&regulation)
-                .into_iter()
-                .map(|(location_id, flags)| (location_id, flags.into_iter().collect()))
-                .collect(),
-        );
+        let mapping = checks::build_location_flag_map(&regulation);
+        self.pending_flag_checks = mapping.location_flags.keys().copied().collect();
+        LocationFlagChanges::add_tracked_flags(mapping.flag_locations.keys().copied());
+        self.location_flag_mapping = Some(mapping);
         self.flag_poll_cursor = 0;
         true
     }
@@ -858,50 +861,69 @@ impl Core {
     /// to be checked. So the cost per frame is capped and falls as the run goes
     /// on.
     fn poll_flag_based_checks(&mut self, save_data: &mut SaveData) {
-        if !self.ensure_pending_flag_checks() {
+        if !self.ensure_location_flag_mapping() {
             return;
         }
-        let Some(pending) = self.pending_flag_checks.as_mut() else {
+        let Some(mapping) = &self.location_flag_mapping else {
             return;
         };
-        if pending.is_empty() {
-            return;
-        }
 
         // Get the flag manager once for the whole batch, not once per location.
         let Ok(events) = (unsafe { CSEventFlagMan::instance() }) else {
             return;
         };
 
-        let batch = FLAG_POLL_BATCH_SIZE.min(pending.len());
+        let mut checked_locations: HashSet<i64> = HashSet::new();
+        let changed_flags = LocationFlagChanges::take_changed_flags();
+        for flag in changed_flags.iter().as_ref() {
+            let Some(location_ids) = mapping.flag_locations.get(flag) else {
+                continue;
+            };
+            for &location_id in location_ids {
+                if self.check_location_flags(events, save_data, location_id) {
+                    checked_locations.insert(location_id);
+                }
+            }
+        }
+
+        let batch = (self.pending_flag_checks.len() - changed_flags.len()).clamp(0, FLAG_POLL_BATCH_SIZE);
         for _ in 0..batch {
-            if self.flag_poll_cursor >= pending.len() {
+            if self.flag_poll_cursor >= self.pending_flag_checks.len() {
                 self.flag_poll_cursor = 0;
             }
-
-            let (location_id, flags) = &pending[self.flag_poll_cursor];
-            let location_id = *location_id;
-
-            let already_checked = save_data.locations.contains(&location_id);
-            let checked = already_checked
-                || flags
-                    .iter()
-                    .any(|flag| events.virtual_memory_flag.get_flag(u32::from(*flag)));
-
-            if !checked {
-                self.flag_poll_cursor += 1;
-                continue;
+            let location_id = self.pending_flag_checks[self.flag_poll_cursor];
+            if self.check_location_flags(events, save_data, location_id) {
+                checked_locations.insert(location_id);
             }
-
-            if !already_checked {
-                info!("Archipelago location {} checked via event flag", location_id);
-                save_data.locations.insert(location_id);
-            }
-
-            // Retire the location. `swap_remove` moves an unvisited entry into
-            // this slot, so the cursor stays put and picks it up next.
-            pending.swap_remove(self.flag_poll_cursor);
         }
+
+        // Retire checked locations from future polling.
+        if !checked_locations.is_empty() {
+            self.pending_flag_checks.retain(|location_id| !checked_locations.contains(location_id));
+        }
+    }
+
+    fn check_location_flags(&self, events: &CSEventFlagMan, save_data: &mut SaveData, location_id: i64) -> bool {
+        let Some(mapping) = &self.location_flag_mapping else {
+            return false;
+        };
+        let Some(flags) = mapping.location_flags.get(&location_id) else {
+            return false;
+        };
+
+        let already_checked = save_data.locations.contains(&location_id);
+        let checked = already_checked
+            || flags
+                .iter()
+                // TODO: This is abyssmally inefficient as it doesn't use tree lookup.
+                // Update fromsoftware-rs or call the game's impl to fix this.
+                .any(|flag| events.virtual_memory_flag.get_flag(u32::from(*flag)));
+
+        if checked && !already_checked {
+            info!("Archipelago location {} checked via event flag", location_id);
+            save_data.locations.insert(location_id);
+        }
+        checked
     }
 
     /// Removes placeholder items from the inventory and tells the server their

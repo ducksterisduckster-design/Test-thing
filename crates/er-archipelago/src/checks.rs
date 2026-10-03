@@ -11,12 +11,19 @@
 //! as checked if any of its flags is set.
 
 use std::collections::{HashMap, HashSet};
+use std::ffi::c_void;
+use std::mem;
+use std::sync::{LazyLock, Mutex};
 
 use eldenring::cs::{ItemLotParam_enemy, ItemLotParam_map};
 use eldenring::param::ITEMLOT_PARAM_ST;
+use fromsoftware_shared::Program;
+use shared::hook;
 use log::*;
+use pelite::pe::Pe;
 
 use crate::item::RegulationManager;
+use crate::rva;
 use crate::slot_data::EventFlagId;
 
 /// The top byte of `get_item_flag_id08` that marks a row as carrying an encoded
@@ -24,6 +31,111 @@ use crate::slot_data::EventFlagId;
 const LOCATION_TAG: u32 = 0xE000_0000;
 const LOCATION_TAG_MASK: u32 = 0xFF00_0000;
 const LOCATION_HIGH_BITS_MASK: u32 = 0x00FF_FFFF;
+
+/// Flag change state which starts out empty and prioritizes flags to check in the core loop.
+/// Reads and writes both occur in the game thread so a Mutex is sufficient.
+static INSTANCE: LazyLock<Mutex<LocationFlagChanges>> = LazyLock::new(|| Mutex::new(Default::default()));
+
+/// Pending flag changes which may correspond to locations getting checked.
+/// To simplify concurrency only static methods are exposed.
+#[derive(Debug, Default)]
+pub struct LocationFlagChanges {
+    /// All flags to report locations changes on.
+    tracked_flags: HashSet<EventFlagId>,
+
+    /// All watched flags which were set individually in-game functions since last processed.
+    /// Calling code should verify the flag is actually set. Note event value base flags can
+    /// be unset for values >1, but all tracked shop flags have quantity 1 currently.
+    set_flags: HashSet<EventFlagId>,
+}
+
+impl LocationFlagChanges {
+    /// Mark the given flag as changed if it is being tracked.
+    pub fn change_flag(flag: EventFlagId) {
+        let mut changes = INSTANCE.lock().unwrap();
+        if changes.tracked_flags.contains(&flag) {
+            changes.set_flags.insert(flag);
+        }
+    }
+
+    pub fn add_tracked_flags<T>(flags: T) where T : IntoIterator<Item = EventFlagId> {
+        let mut changes = INSTANCE.lock().unwrap();
+        changes.tracked_flags.extend(flags);
+    }
+
+    /// Take all flags added since the last time this was called.
+    pub fn take_changed_flags() -> Vec<EventFlagId> {
+        let mut changes = INSTANCE.lock().unwrap();
+        changes.set_flags.drain().collect()
+    }
+}
+
+type SetEventFlagFn = unsafe extern "C" fn(event_flag_man: *mut c_void, flag: u32, value: i32);
+type SetEventValueFn = unsafe extern "C" fn(event_flag_man: *mut c_void, flag: *const u32, width: u32, value: u32);
+
+fn set_event_flag_override(flag: u32, value: i32, original: &dyn Fn()) {
+    original();
+    // value is not bool and things will break if it's typed as bool.
+    if value != 0 {
+        LocationFlagChanges::change_flag(EventFlagId(flag));
+    }
+}
+
+fn set_event_value_override(flag: *const u32, value: u32, original: &dyn Fn()) {
+    original();
+    if value > 0 {
+        // Safety: The flag is unconditionally dereferenced in the expected original fn.
+        let flag = unsafe { *flag };
+        LocationFlagChanges::change_flag(EventFlagId(flag));
+    }
+}
+
+/// Hooks event flag changes which can detect item pickups and shop purchases
+/// immediately. These are tracked in the [LocationFlagChanges] instance.
+pub unsafe fn hook_flag_changes() {
+    let program = Program::current();
+    let rvas = rva::get();
+    let set_event_flag_addr = program.rva_to_va(rvas.set_event_flag).unwrap();
+    let set_event_value_addr = program.rva_to_va(rvas.set_event_value).unwrap();
+    unsafe {
+        let set_event_flag = mem::transmute::<u64, SetEventFlagFn>(set_event_flag_addr);
+        let set_event_value = mem::transmute::<u64, SetEventValueFn>(set_event_value_addr);
+        // This uses winhook instead of ilhook as it provides slightly higher-level access
+        // to function args, is performant and thread-safe, etc. Both are fine to use together,
+        // but committing to one or the other would be fine too.
+        hook::hook(
+            set_event_flag,
+            |original| {
+                move |event_flag_man, flag, value|
+                    set_event_flag_override(flag, value, &|| original(event_flag_man, flag, value))
+            });
+        hook::hook(
+            set_event_value,
+            |original| {
+                move |event_flag_man, flag, width, value|
+                    set_event_value_override(flag, value, &|| original(event_flag_man, flag, width, value))
+            });
+    }
+}
+
+/// Many-to-many mapping between location ids and event flags baked into
+/// regulation data.
+pub struct LocationFlagMapping {
+    pub location_flags: HashMap<i64, Vec<EventFlagId>>,
+    pub flag_locations: HashMap<EventFlagId, Vec<i64>>,
+}
+
+impl LocationFlagMapping {
+    pub fn new(mapping: HashSet<(i64, EventFlagId)>) -> Self {
+        let mut location_flags: HashMap<i64, Vec<EventFlagId>> = HashMap::new();
+        let mut flag_locations: HashMap<EventFlagId, Vec<i64>> = HashMap::new();
+        for (location, flag) in mapping {
+            location_flags.entry(location).or_default().push(flag);
+            flag_locations.entry(flag).or_default().push(location);
+        }
+        Self { location_flags, flag_locations }
+    }
+}
 
 /// If the randomizer tagged `row` with a location ID, decodes it and returns it
 /// with the event flag to poll for it.
@@ -44,14 +156,12 @@ fn decode_archipelago_row(row: &ITEMLOT_PARAM_ST) -> Option<(i64, EventFlagId)> 
 
 /// Scans every row of one `ItemLotParam` table and records the
 /// randomizer-tagged ones in `map`.
-fn collect_location_flags<P>(regulation: &RegulationManager, map: &mut HashMap<i64, HashSet<EventFlagId>>)
+fn collect_location_flags<P>(regulation: &RegulationManager, mapping: &mut HashSet<(i64, EventFlagId)>)
 where
     P: eldenring::cs::SoloParam<StructType = ITEMLOT_PARAM_ST>,
 {
     for (_, row) in regulation.rows::<P>() {
-        if let Some((location_id, flag)) = decode_archipelago_row(row) {
-            map.entry(location_id).or_default().insert(flag);
-        }
+        mapping.extend(decode_archipelago_row(row));
     }
 }
 
@@ -60,19 +170,19 @@ where
 
 /// Only call this once per session, since the regulation doesn't change while
 /// the game runs. Cache the result instead of rebuilding it every tick.
-pub fn build_location_flag_map(regulation: &RegulationManager) -> HashMap<i64, HashSet<EventFlagId>> {
-    let mut map = HashMap::new();
-    collect_location_flags::<ItemLotParam_map>(regulation, &mut map);
-    collect_location_flags::<ItemLotParam_enemy>(regulation, &mut map);
+pub fn build_location_flag_map(regulation: &RegulationManager) -> LocationFlagMapping {
+    let mut mapping = HashSet::new();
+    collect_location_flags::<ItemLotParam_map>(regulation, &mut mapping);
+    collect_location_flags::<ItemLotParam_enemy>(regulation, &mut mapping);
 
-    let flag_count: usize = map.values().map(HashSet::len).sum();
+    let mapping = LocationFlagMapping::new(mapping);
     info!(
         "Built Archipelago location/flag map: {} location(s), {} flag(s)",
-        map.len(),
-        flag_count
+        mapping.location_flags.len(),
+        mapping.flag_locations.len()
     );
 
-    map
+    mapping
 }
 
 #[cfg(test)]

@@ -5,6 +5,7 @@ mod checks;
 mod core;
 mod game;
 mod item;
+mod rva;
 mod save_data;
 mod slot_data;
 
@@ -29,6 +30,7 @@ extern "C" fn DllMain(_: HINSTANCE, call_reason: u32) -> bool {
     unsafe {
         SaveData::hook();
         item::hook_items();
+        checks::hook_flag_changes();
     }
 
     let blocker =

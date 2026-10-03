@@ -15,6 +15,7 @@ mod config;
 mod core;
 mod error_display;
 mod game;
+pub mod hook;
 mod input_blocker;
 mod overlay;
 mod section_profiler;
