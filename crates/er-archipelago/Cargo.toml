@@ -21,6 +21,7 @@ hudhook.workspace = true
 ilhook.workspace = true
 json.workspace = true
 log.workspace = true
+pelite.workspace = true
 regex-macro.workspace = true
 regex.workspace = true
 serde.workspace = true
